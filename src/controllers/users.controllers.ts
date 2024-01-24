@@ -9,6 +9,7 @@ import {
   RegisterRequestBody,
   ResetPasswordRequestBody,
   TokenPayload,
+  UpdateMeRequestBody,
   VerifyEmailVerifyRequestBody,
   VerifyForgotPasswordRequestBody
 } from '~/models/requests/user.requests'
@@ -150,22 +151,24 @@ export const getMeController: RequestHandler = async (
   next: NextFunction
 ) => {
   const { user_id } = req.decoded_authorization as TokenPayload
-  const user = await userService.getMe(user_id)
+  const result = await userService.getMe(user_id)
   res.status(200).json({
-    message: USERS_MESSAGES.GET_ME,
-    user
+    message: USERS_MESSAGES.GET_ME_SUCCESS,
+    result
   })
 }
 
 export const updateMeController: RequestHandler = async (
-  req: Request<ParamsDictionary, any, LogoutRequestBody, Query, Record<string, any>>,
+  req: Request<ParamsDictionary, any, UpdateMeRequestBody, Query, Record<string, any>>,
   res: Response,
   next: NextFunction
 ) => {
   const { user_id } = req.decoded_authorization as TokenPayload
-  const user = await userService.getMe(user_id)
+  const { body } = req
+
+  const result = await userService.updateMe(user_id, body)
   res.status(200).json({
-    message: USERS_MESSAGES.GET_ME,
-    user
+    message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
+    result
   })
 }
