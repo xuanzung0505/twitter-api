@@ -52,5 +52,9 @@ export const USERS_MESSAGES = {
   VERIFY_EMAIL_VERIFY_TOKEN_SUCCESS: 'Verify email verify token successfully',
   VERIFY_FORGOT_PASSWORD_TOKEN_SUCCESS: 'Verify forgot password token successfully',
   GET_ME_SUCCESS: 'Get my profile successfully',
-  UPDATE_ME_SUCCESS: 'Update my profile successfully'
+  UPDATE_ME_SUCCESS: 'Update my profile successfully',
+  FOLLOWED_USER_ID_MUST_BE_A_STRING: 'Followed user_id must be a string',
+  FOLLOWED_USER_ID_IS_REQUIRED: 'Followed user_id is required',
+  FOLLOWED_USER_ID_IS_INVALID: 'Followed user_id is invalid',
+  FOLLOW_SUCCESS: 'Follow user successfully'
 } as const

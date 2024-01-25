@@ -10,6 +10,7 @@ import { config } from 'dotenv'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import { ObjectId } from 'mongodb'
 import { JwtPayload } from 'jsonwebtoken'
+import Follower from '~/models/schemas/Follower.schema'
 
 config()
 const JWT_SECRET_ACCESS_TOKEN = process.env.JWT_SECRET_ACCESS_TOKEN
@@ -218,6 +219,16 @@ class UserService {
       }
     )
     return user
+  }
+
+  async follow(payload: { user_id: ObjectId; followed_user_id: ObjectId }) {
+    const { user_id, followed_user_id } = payload
+    const result = await databaseService.followers.findOneAndUpdate(
+      { user_id, followed_user_id },
+      { $set: { ...payload } },
+      { upsert: true, returnDocument: 'after' }
+    )
+    return result
   }
 }
 

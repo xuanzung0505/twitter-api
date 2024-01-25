@@ -3,6 +3,7 @@ import userService from '~/services/users.services'
 import { ParamsDictionary, Query } from 'express-serve-static-core'
 import {
   EmailVerifyRequestBody,
+  FollowRequestBody,
   ForgotPasswordRequestBody,
   LoginRequestBody,
   LogoutRequestBody,
@@ -169,6 +170,24 @@ export const updateMeController: RequestHandler = async (
   const result = await userService.updateMe(user_id, body)
   res.status(200).json({
     message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
+    result
+  })
+}
+
+export const followController: RequestHandler = async (
+  req: Request<ParamsDictionary, any, FollowRequestBody, Query, Record<string, any>>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const { followed_user_id } = req.body
+
+  const result = await userService.follow({
+    user_id: new ObjectId(user_id),
+    followed_user_id: new ObjectId(followed_user_id)
+  })
+  res.status(200).json({
+    message: USERS_MESSAGES.FOLLOW_SUCCESS,
     result
   })
 }
