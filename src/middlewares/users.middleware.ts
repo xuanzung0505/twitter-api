@@ -127,6 +127,41 @@ const forgotPasswordTokenSchema: ParamSchema = {
   }
 }
 
+const userIdSchema: ParamSchema = {
+  isString: { errorMessage: USERS_MESSAGES.USER_ID_MUST_BE_A_STRING },
+  trim: true,
+  notEmpty: { errorMessage: USERS_MESSAGES.USER_ID_IS_REQUIRED },
+  custom: {
+    options: async (value, { req }) => {
+      const isValidObjectId = ObjectId.isValid(value)
+      if (!isValidObjectId)
+        throw new ErrorWithStatus({
+          message: USERS_MESSAGES.USER_ID_IS_INVALID,
+          status: HTTP_STATUS.NOT_FOUND
+        })
+      if (value === (req.decoded_authorization as TokenPayload).user_id)
+        throw new ErrorWithStatus({
+          message: USERS_MESSAGES.USER_ID_IS_INVALID,
+          status: HTTP_STATUS.UNPROCESSABLE_ENTITY
+        })
+      const user = await databaseService.users.findOne({ _id: new ObjectId(value) })
+      if (!user) {
+        throw new ErrorWithStatus({
+          message: USERS_MESSAGES.USER_NOT_FOUND,
+          status: HTTP_STATUS.UNAUTHORIZED
+        })
+      }
+      if (user.verify != UserVerifyStatus.Verified) {
+        throw new ErrorWithStatus({
+          message: USERS_MESSAGES.USER_NOT_VERIFIED,
+          status: HTTP_STATUS.FORBIDDEN
+        })
+      }
+      return true
+    }
+  }
+}
+
 const imageUrlSchema: ParamSchema = {
   optional: true,
   isString: { errorMessage: USERS_MESSAGES.IMAGE_URL_MUST_BE_A_STRING },
@@ -480,41 +515,17 @@ export const updateMeValidator = validate(
 export const followValidator = validate(
   checkSchema(
     {
-      followed_user_id: {
-        isString: { errorMessage: USERS_MESSAGES.FOLLOWED_USER_ID_MUST_BE_A_STRING },
-        trim: true,
-        notEmpty: { errorMessage: USERS_MESSAGES.FOLLOWED_USER_ID_IS_REQUIRED },
-        custom: {
-          options: async (value, { req }) => {
-            const isValidObjectId = ObjectId.isValid(value)
-            if (!isValidObjectId)
-              throw new ErrorWithStatus({
-                message: USERS_MESSAGES.FOLLOWED_USER_ID_IS_INVALID,
-                status: HTTP_STATUS.NOT_FOUND
-              })
-            if (value === (req.decoded_authorization as TokenPayload).user_id)
-              throw new ErrorWithStatus({
-                message: USERS_MESSAGES.FOLLOWED_USER_ID_IS_INVALID,
-                status: HTTP_STATUS.UNPROCESSABLE_ENTITY
-              })
-            const followed_user = await databaseService.users.findOne({ _id: new ObjectId(value) })
-            if (!followed_user) {
-              throw new ErrorWithStatus({
-                message: USERS_MESSAGES.USER_NOT_FOUND,
-                status: HTTP_STATUS.UNAUTHORIZED
-              })
-            }
-            if (followed_user.verify != UserVerifyStatus.Verified) {
-              throw new ErrorWithStatus({
-                message: USERS_MESSAGES.USER_NOT_VERIFIED,
-                status: HTTP_STATUS.FORBIDDEN
-              })
-            }
-            return true
-          }
-        }
-      }
+      followed_user_id: userIdSchema
     },
     ['body']
+  )
+)
+
+export const unfollowValidator = validate(
+  checkSchema(
+    {
+      user_id: userIdSchema
+    },
+    ['params']
   )
 )

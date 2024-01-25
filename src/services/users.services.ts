@@ -230,6 +230,12 @@ class UserService {
     )
     return result
   }
+
+  async unfollow(payload: { user_id: ObjectId; followed_user_id: ObjectId }) {
+    const { user_id, followed_user_id } = payload
+    const result = await databaseService.followers.findOneAndDelete({ user_id, followed_user_id })
+    return result
+  }
 }
 
 const userService = new UserService()

@@ -10,6 +10,7 @@ import {
   RegisterRequestBody,
   ResetPasswordRequestBody,
   TokenPayload,
+  UnFollowRequestParams,
   UpdateMeRequestBody,
   VerifyEmailVerifyRequestBody,
   VerifyForgotPasswordRequestBody
@@ -190,4 +191,27 @@ export const followController: RequestHandler = async (
     message: USERS_MESSAGES.FOLLOW_SUCCESS,
     result
   })
+}
+
+export const unfollowController: RequestHandler = async (
+  req: Request<UnFollowRequestParams, any, any, Query, Record<string, any>>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const followed_user_id = req.params.user_id as string
+
+  const result = await userService.unfollow({
+    user_id: new ObjectId(user_id),
+    followed_user_id: new ObjectId(followed_user_id)
+  })
+  if (result)
+    res.status(200).json({
+      message: USERS_MESSAGES.UNFOLLOW_SUCCESS,
+      result
+    })
+  else
+    res.status(200).json({
+      message: USERS_MESSAGES.UNFOLLOW_ALREADY
+    })
 }

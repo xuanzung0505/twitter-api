@@ -53,8 +53,10 @@ export const USERS_MESSAGES = {
   VERIFY_FORGOT_PASSWORD_TOKEN_SUCCESS: 'Verify forgot password token successfully',
   GET_ME_SUCCESS: 'Get my profile successfully',
   UPDATE_ME_SUCCESS: 'Update my profile successfully',
-  FOLLOWED_USER_ID_MUST_BE_A_STRING: 'Followed user_id must be a string',
-  FOLLOWED_USER_ID_IS_REQUIRED: 'Followed user_id is required',
-  FOLLOWED_USER_ID_IS_INVALID: 'Followed user_id is invalid',
-  FOLLOW_SUCCESS: 'Follow user successfully'
+  USER_ID_MUST_BE_A_STRING: 'user_id must be a string',
+  USER_ID_IS_REQUIRED: 'user_id is required',
+  USER_ID_IS_INVALID: 'user_id is invalid',
+  FOLLOW_SUCCESS: 'Follow user successfully',
+  UNFOLLOW_SUCCESS: 'Unfollow user successfully',
+  UNFOLLOW_ALREADY: 'Unfollow user already'
 } as const

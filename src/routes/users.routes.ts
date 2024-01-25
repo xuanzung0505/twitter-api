@@ -10,7 +10,8 @@ import {
   verifyEmailVerifyController,
   updateMeController,
   resetPasswordController,
-  followController
+  followController,
+  unfollowController
 } from '~/controllers/users.controllers'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
 import {
@@ -23,6 +24,7 @@ import {
   refreshTokenValidator,
   registerValidator,
   resetPasswordValidator,
+  unfollowValidator,
   updateMeValidator,
   verifiedUserValidator,
   verifyEmailVerifyTokenValidator,
@@ -147,7 +149,7 @@ userRouter.patch(
  * Path: /follow
  * Method: POST
  * Header: {Authorization: Bearer <access_token>}
- * Body: { followed_user_id: string, created_at: Date }
+ * Body: { followed_user_id: string }
  */
 
 userRouter.post(
@@ -156,6 +158,21 @@ userRouter.post(
   verifiedUserValidator,
   followValidator,
   wrapRequestHandler(followController)
+)
+
+/*
+ * Description: Unfollow user
+ * Path: /follow/:user_id
+ * Method: DELETE
+ * Header: {Authorization: Bearer <access_token>}
+ */
+
+userRouter.delete(
+  '/follow/:user_id',
+  accessTokenValidator,
+  verifiedUserValidator,
+  unfollowValidator,
+  wrapRequestHandler(unfollowController)
 )
 
 export default userRouter
