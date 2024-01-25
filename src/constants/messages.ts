@@ -11,7 +11,10 @@ export const USERS_MESSAGES = {
   WEBSITE_MUST_BE_A_STRING: 'Website must be a string',
   WEBSITE_LENGTH_MUST_BE_FROM_1_TO_100: 'Location length must be from 1 to 100',
   USERNAME_MUST_BE_A_STRING: 'Username must be a string',
-  USERNAME_LENGTH_MUST_BE_FROM_1_TO_50: 'Username length must be from 1 to 50',
+  USERNAME_LENGTH_MUST_BE_FROM_4_TO_15: 'Username length must be from 4 to 15',
+  USERNAME_IS_INVALID:
+    'Username must be 4-15 characters long and must contain at least 1 letter, numbers and underscores',
+  USER_ALREADY_EXISTS: 'User already exists',
   IMAGE_URL_MUST_BE_A_STRING: 'Avatar must be a string',
   IMAGE_URL_LENGTH_MUST_BE_FROM_1_TO_100: 'Avatar length must be from 1 to 100',
   EMAIL_ALREADY_EXISTS: 'Email already exists',

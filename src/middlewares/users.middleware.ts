@@ -15,6 +15,7 @@ import User from '~/models/schemas/User.schema'
 import { TokenPayload } from '~/models/requests/user.requests'
 import { UserVerifyStatus } from '~/constants/enums'
 import { comparePassword } from '~/utils/bcrypt'
+import { REGEX_USERNAME } from '~/constants/regex'
 
 config()
 const JWT_SECRET_ACCESS_TOKEN = process.env.JWT_SECRET_ACCESS_TOKEN
@@ -172,6 +173,30 @@ const imageUrlSchema: ParamSchema = {
       max: 100
     },
     errorMessage: USERS_MESSAGES.IMAGE_URL_LENGTH_MUST_BE_FROM_1_TO_100
+  }
+}
+
+const usernameSchema: ParamSchema = {
+  optional: true,
+  isString: { errorMessage: USERS_MESSAGES.USERNAME_MUST_BE_A_STRING },
+  trim: true,
+  custom: {
+    options: async (value: string, { req }) => {
+      const matchedPattern = value.match(REGEX_USERNAME)
+      if (matchedPattern == null || matchedPattern[0] != value) {
+        throw new Error(USERS_MESSAGES.USERNAME_IS_INVALID)
+      }
+      const decoded_authorization = req.decoded_authorization as TokenPayload
+      const { user_id } = decoded_authorization
+      const otherUser = await databaseService.users.findOne({
+        username: value,
+        _id: { $ne: new ObjectId(user_id) }
+      })
+      if (otherUser) {
+        throw new Error(USERS_MESSAGES.USER_ALREADY_EXISTS)
+      }
+      return true
+    }
   }
 }
 
@@ -493,18 +518,7 @@ export const updateMeValidator = validate(
           errorMessage: USERS_MESSAGES.WEBSITE_LENGTH_MUST_BE_FROM_1_TO_100
         }
       },
-      username: {
-        optional: true,
-        isString: { errorMessage: USERS_MESSAGES.USERNAME_MUST_BE_A_STRING },
-        trim: true,
-        isLength: {
-          options: {
-            min: 1,
-            max: 50
-          },
-          errorMessage: USERS_MESSAGES.USERNAME_LENGTH_MUST_BE_FROM_1_TO_50
-        }
-      },
+      username: usernameSchema,
       avatar: imageUrlSchema,
       cover_photo: imageUrlSchema
     },
