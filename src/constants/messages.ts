@@ -49,6 +49,7 @@ export const USERS_MESSAGES = {
   OLD_PASSWORD_IS_INVALID: 'Old password is invalid',
   USER_NOT_FOUND: 'User not found',
   USER_NOT_VERIFIED: 'User not verified',
+  REFRESH_TOKEN_ROTATE_SUCCESS: 'Refresh token is rotated successfully',
   CHECK_EMAIL_TO_VERIFY_EMAIL: 'Check email to verify email',
   CHECK_EMAIL_TO_RESET_PASSWORD: 'Check email to reset password',
   RESET_PASSWORD_SUCCESS: 'Reset password successfully',

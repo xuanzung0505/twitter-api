@@ -11,7 +11,8 @@ import {
   updateMeController,
   resetPasswordController,
   followController,
-  unfollowController
+  unfollowController,
+  refreshTokenController
 } from '~/controllers/users.controllers'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
 import {
@@ -50,6 +51,14 @@ userRouter.post('/register', registerValidator, wrapRequestHandler(registerContr
  * Body: { email:string, password: string}
  */
 userRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
+
+/*
+ * Description: Current access_token is expired, request a new access_token
+ * Path: /refresh_token
+ * Method: POST
+ * Body: { refresh_token: string }
+ */
+userRouter.post('/refresh_token', refreshTokenValidator, wrapRequestHandler(refreshTokenController))
 
 /*
  * Description: Logout a user

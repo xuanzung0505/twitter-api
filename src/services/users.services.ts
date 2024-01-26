@@ -1,6 +1,6 @@
 import User from '~/models/schemas/User.schema'
 import databaseService from './database.services'
-import { RegisterRequestBody, UpdateMeRequestBody } from '~/models/requests/user.requests'
+import { RegisterRequestBody, TokenPayload, UpdateMeRequestBody } from '~/models/requests/user.requests'
 import { signToken } from '~/utils/jwt'
 import { TokenType, UserVerifyStatus } from '~/constants/enums'
 import { comparePassword, hashPassword } from '~/utils/bcrypt'
@@ -33,12 +33,12 @@ class UserService {
     })
   }
 
-  private signRefreshToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
+  private signRefreshToken({ user_id, verify, exp }: { user_id: string; verify: UserVerifyStatus; exp?: number }) {
     return signToken({
       payload: { user_id, verify, token_type: TokenType.RefreshToken },
       secret: JWT_SECRET_REFRESH_TOKEN as string,
       options: {
-        expiresIn: REFRESH_TOKEN_EXPIRES_IN as string
+        expiresIn: exp ?? (REFRESH_TOKEN_EXPIRES_IN as string)
       }
     })
   }
@@ -114,6 +114,29 @@ class UserService {
     throw new ErrorWithStatus({ message: USERS_MESSAGES.EMAIL_OR_PASSWORD_IS_INCORRECT, status: 422 })
   }
 
+  async rotateRefreshToken(payload: { refresh_token: string; decoded_refresh_token: TokenPayload }) {
+    const { refresh_token: old_refresh_token, decoded_refresh_token } = payload
+    const { user_id, verify } = decoded_refresh_token
+    const exp = decoded_refresh_token.exp as number
+
+    //delete current refresh_token
+    //create new refresh_token + new access_token, retain old refresh_token's exp date
+    //save new refresh_token
+    const [deleleResult, access_token, refresh_token] = await Promise.all([
+      databaseService.refreshTokens.deleteOne({ token: old_refresh_token }),
+      this.signAccessToken({ user_id, verify }),
+      this.signRefreshToken({ user_id, verify, exp })
+    ])
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({ token: refresh_token, user_id: new ObjectId(user_id) })
+    )
+
+    return {
+      access_token,
+      refresh_token
+    }
+  }
+
   async logout(refresh_token: string) {
     const result = await databaseService.refreshTokens.deleteOne({ token: refresh_token })
     return result
@@ -135,11 +158,23 @@ class UserService {
   }
 
   async verifyEmailVerify(user_id: string) {
-    await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
-      {
-        $set: { verify: UserVerifyStatus.Verified, email_verify_token: '', updated_at: '$$NOW' }
-      }
+    const [token, updateResult] = await Promise.all([
+      this.signAccessAndRefreshToken({ user_id, verify: UserVerifyStatus.Verified }),
+      databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
+        {
+          $set: { verify: UserVerifyStatus.Verified, email_verify_token: '', updated_at: '$$NOW' }
+        }
+      ])
     ])
+
+    const [access_token, refresh_token] = token
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({ token: refresh_token, user_id: new ObjectId(user_id) })
+    )
+    return {
+      access_token,
+      refresh_token
+    }
   }
 
   async forgotPassword({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {

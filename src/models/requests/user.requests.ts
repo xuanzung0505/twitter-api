@@ -14,6 +14,10 @@ export interface LoginRequestBody {
   password: string
 }
 
+export interface RefreshTokenRequestBody {
+  refresh_token: string
+}
+
 export interface LogoutRequestBody {
   refresh_token: string
 }

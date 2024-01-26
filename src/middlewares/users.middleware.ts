@@ -324,6 +324,38 @@ export const refreshTokenValidator = validate(
   )
 )
 
+export const logoutValidator = validate(
+  checkSchema(
+    {
+      Authorization: {
+        notEmpty: { errorMessage: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED },
+        custom: {
+          options: async (value: string, { req }) => {
+            try {
+              const access_token = value.split(' ')[1]
+              if (!access_token) throw new Error(USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED)
+              const decoded_authorization = await verifyToken({
+                token: access_token,
+                secret: JWT_SECRET_ACCESS_TOKEN as string
+              })
+              ;(req as Request).decoded_authorization = decoded_authorization
+            } catch (error) {
+              if (error instanceof JsonWebTokenError) {
+                throw new ErrorWithStatus({
+                  message: capitalize(error.message),
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              } else throw error
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['headers']
+  )
+)
+
 export const emailVerifyValidator = validate(
   checkSchema(
     {
