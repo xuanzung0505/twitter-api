@@ -22,6 +22,11 @@ import { USERS_MESSAGES } from '~/constants/messages'
 import { JwtPayload } from 'jsonwebtoken'
 import { UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { omit } from 'lodash'
+import { config } from 'dotenv'
+
+config()
+const { CLIENT_REDIRECT_CALLBACK } = process.env
 
 export const registerController: RequestHandler = async (
   req: Request<ParamsDictionary, any, RegisterRequestBody, Query, Record<string, any>>,
@@ -64,6 +69,12 @@ export const loginController: RequestHandler = async (
   }
 }
 
+export const googleOAuthController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+  const { code } = req.query
+  const result = await userService.googleOAuth(code as string)
+  const urlRedirect = `${CLIENT_REDIRECT_CALLBACK}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.new_user}`
+  return res.redirect(urlRedirect)
+}
 export const refreshTokenController: RequestHandler = async (
   req: Request<ParamsDictionary, any, RefreshTokenRequestBody, Query, Record<string, any>>,
   res: Response,

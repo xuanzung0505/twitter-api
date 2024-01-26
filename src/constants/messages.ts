@@ -44,6 +44,7 @@ export const USERS_MESSAGES = {
   REGISTER_SUCCESS: 'Register successfully',
   LOGIN_SUCCESS: 'Login successfully',
   LOGIN_FAILED: 'Login failed',
+  GMAIL_NOT_VERIFIED: 'Gmail not verified',
   LOGOUT_SUCCESS: 'Logout successfully',
   EMAIL_OR_PASSWORD_IS_INCORRECT: 'Email or password is incorrect',
   OLD_PASSWORD_IS_INVALID: 'Old password is invalid',

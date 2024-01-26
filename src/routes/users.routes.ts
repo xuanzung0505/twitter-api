@@ -12,7 +12,8 @@ import {
   resetPasswordController,
   followController,
   unfollowController,
-  refreshTokenController
+  refreshTokenController,
+  googleOAuthController
 } from '~/controllers/users.controllers'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
 import {
@@ -51,6 +52,14 @@ userRouter.post('/register', registerValidator, wrapRequestHandler(registerContr
  * Body: { email:string, password: string}
  */
 userRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
+
+/*
+ * Description: OAuth 2.0 with Google
+ * Path: /oauth/google
+ * Method: GET
+ */
+
+userRouter.get('/oauth/google', wrapRequestHandler(googleOAuthController))
 
 /*
  * Description: Current access_token is expired, request a new access_token
