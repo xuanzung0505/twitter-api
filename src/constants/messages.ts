@@ -63,5 +63,7 @@ export const USERS_MESSAGES = {
   USER_ID_IS_INVALID: 'user_id is invalid',
   FOLLOW_SUCCESS: 'Follow user successfully',
   UNFOLLOW_SUCCESS: 'Unfollow user successfully',
-  UNFOLLOW_ALREADY: 'Unfollow user already'
+  UNFOLLOW_ALREADY: 'Unfollow user already',
+  //MEDIA
+  UPLOAD_SUCCESSFULLY: 'Upload successfully'
 } as const
