@@ -16,12 +16,12 @@ import { TokenPayload } from '~/models/requests/user.requests'
 import { UserVerifyStatus } from '~/constants/enums'
 import { comparePassword } from '~/utils/bcrypt'
 import { REGEX_USERNAME } from '~/constants/regex'
-
-config()
-const JWT_SECRET_ACCESS_TOKEN = process.env.JWT_SECRET_ACCESS_TOKEN
-const JWT_SECRET_REFRESH_TOKEN = process.env.JWT_SECRET_REFRESH_TOKEN
-const JWT_SECRET_EMAIL_VERIFY_TOKEN = process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN
-const JWT_SECRET_FORGOT_PASSWORD_TOKEN = process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN
+import {
+  JWT_SECRET_ACCESS_TOKEN,
+  JWT_SECRET_EMAIL_VERIFY_TOKEN,
+  JWT_SECRET_FORGOT_PASSWORD_TOKEN,
+  JWT_SECRET_REFRESH_TOKEN
+} from '~/utils/getEnv'
 
 const nameSchema: ParamSchema = {
   isString: { errorMessage: USERS_MESSAGES.NAME_MUST_BE_A_STRING },

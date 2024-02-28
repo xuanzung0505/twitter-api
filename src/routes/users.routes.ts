@@ -37,7 +37,7 @@ import { wrapRequestHandler } from '~/utils/handlers'
 
 const userRouter = Router()
 
-/*
+/**
  * Description: Register a user
  * Path: /register
  * Method: POST
@@ -45,7 +45,7 @@ const userRouter = Router()
  */
 userRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
 
-/*
+/**
  * Description: Login a user
  * Path: /login
  * Method: POST
@@ -53,7 +53,7 @@ userRouter.post('/register', registerValidator, wrapRequestHandler(registerContr
  */
 userRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
 
-/*
+/**
  * Description: OAuth 2.0 with Google
  * Path: /oauth/google
  * Method: GET
@@ -61,7 +61,7 @@ userRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
 
 userRouter.get('/oauth/google', wrapRequestHandler(googleOAuthController))
 
-/*
+/**
  * Description: Current access_token is expired, request a new access_token
  * Path: /refresh_token
  * Method: POST
@@ -69,7 +69,7 @@ userRouter.get('/oauth/google', wrapRequestHandler(googleOAuthController))
  */
 userRouter.post('/refresh_token', refreshTokenValidator, wrapRequestHandler(refreshTokenController))
 
-/*
+/**
  * Description: Logout a user
  * Path: /logout
  * Method: POST
@@ -78,7 +78,7 @@ userRouter.post('/refresh_token', refreshTokenValidator, wrapRequestHandler(refr
  */
 userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController))
 
-/*
+/**
  * Description: Submit email to verify user's email, send email to user
  * Path: /verify-email-token
  * Method: POST
@@ -86,7 +86,7 @@ userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequ
  */
 userRouter.post('/verify-email-token', emailVerifyValidator, wrapRequestHandler(emailVerifyController))
 
-/*
+/**
  * Description: Verify link in email to verify user's email
  * Path: /verify-email
  * Method: POST
@@ -94,7 +94,7 @@ userRouter.post('/verify-email-token', emailVerifyValidator, wrapRequestHandler(
  */
 userRouter.post('/verify-email', verifyEmailVerifyTokenValidator, wrapRequestHandler(verifyEmailVerifyController))
 
-/*
+/**
  * Description: Submit email to reset password, send email to user
  * Path: /forgot-password
  * Method: POST
@@ -102,7 +102,7 @@ userRouter.post('/verify-email', verifyEmailVerifyTokenValidator, wrapRequestHan
  */
 userRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
 
-/*
+/**
  * Description: Verify link in email to reset password
  * Path: /verify-forgot-password
  * Method: POST
@@ -114,7 +114,7 @@ userRouter.post(
   wrapRequestHandler(verifyForgotPasswordController)
 )
 
-/*
+/**
  * Description: reset password for logged-in user or user who forgot password
  * Path: /reset-password
  * Method: POST
@@ -129,7 +129,7 @@ userRouter.post(
   wrapRequestHandler(resetPasswordController)
 )
 
-/*
+/**
  * Description: Get my profile
  * Path: /me
  * Method: GET
@@ -137,7 +137,7 @@ userRouter.post(
  */
 userRouter.get('/me', accessTokenValidator, wrapRequestHandler(getMeController))
 
-/*
+/**
  * Description: Update my profile
  * Path: /me
  * Method: PATCH
@@ -162,7 +162,7 @@ userRouter.patch(
   wrapRequestHandler(updateMeController)
 )
 
-/*
+/**
  * Description: Follow user
  * Path: /follow
  * Method: POST
@@ -178,7 +178,7 @@ userRouter.post(
   wrapRequestHandler(followController)
 )
 
-/*
+/**
  * Description: Unfollow user
  * Path: /follow/:user_id
  * Method: DELETE

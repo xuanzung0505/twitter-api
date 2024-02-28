@@ -3,14 +3,14 @@ import { config } from 'dotenv'
 import User from '~/models/schemas/User.schema'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import Follower from '~/models/schemas/Follower.schema'
-
-config()
-const DB_USERNAME = process.env.DB_USERNAME
-const DB_PASSWORD = process.env.DB_PASSWORD
-const DB_NAME = process.env.DB_NAME
-const DB_USERS_COLLECTION = process.env.DB_USERS_COLLECTION
-const DB_REFRESH_TOKENS_COLLECTION = process.env.DB_REFRESH_TOKENS_COLLECTION
-const DB_FOLLOWERS_COLLECTION = process.env.DB_FOLLOWERS_COLLECTION
+import {
+  DB_PASSWORD,
+  DB_USERNAME,
+  DB_NAME,
+  DB_USERS_COLLECTION,
+  DB_REFRESH_TOKENS_COLLECTION,
+  DB_FOLLOWERS_COLLECTION
+} from '~/utils/getEnv'
 
 const uri = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@root.8d0hemf.mongodb.net/?retryWrites=true&w=majority`
 
@@ -30,6 +30,9 @@ class DatabaseService {
 
     this.db = this.client.db(DB_NAME)
   }
+  /**
+   * connect to mongoDB
+   */
   async connect() {
     try {
       // Send a ping to confirm a successful connection

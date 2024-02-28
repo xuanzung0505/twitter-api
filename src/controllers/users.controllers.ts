@@ -24,9 +24,7 @@ import { UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { omit } from 'lodash'
 import { config } from 'dotenv'
-
-config()
-const { CLIENT_REDIRECT_CALLBACK } = process.env
+import { CLIENT_REDIRECT_CALLBACK } from '~/utils/getEnv'
 
 export const registerController: RequestHandler = async (
   req: Request<ParamsDictionary, any, RegisterRequestBody, Query, Record<string, any>>,

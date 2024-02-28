@@ -13,13 +13,19 @@ import { JwtPayload } from 'jsonwebtoken'
 import axios from 'axios'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { randomBytes } from 'crypto'
-
-config()
-const { JWT_SECRET_ACCESS_TOKEN, ACCESS_TOKEN_EXPIRES_IN } = process.env
-const { JWT_SECRET_REFRESH_TOKEN, REFRESH_TOKEN_EXPIRES_IN } = process.env
-const { JWT_SECRET_EMAIL_VERIFY_TOKEN, EMAIL_VERIFY_TOKEN_EXPIRES_IN } = process.env
-const { JWT_SECRET_FORGOT_PASSWORD_TOKEN, FORGOT_PASSWORD_TOKEN_EXPIRES_IN } = process.env
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI } = process.env
+import {
+  JWT_SECRET_ACCESS_TOKEN,
+  ACCESS_TOKEN_EXPIRES_IN,
+  JWT_SECRET_REFRESH_TOKEN,
+  REFRESH_TOKEN_EXPIRES_IN,
+  JWT_SECRET_EMAIL_VERIFY_TOKEN,
+  EMAIL_VERIFY_TOKEN_EXPIRES_IN,
+  JWT_SECRET_FORGOT_PASSWORD_TOKEN,
+  FORGOT_PASSWORD_TOKEN_EXPIRES_IN,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI
+} from '~/utils/getEnv'
 
 class UserService {
   private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
