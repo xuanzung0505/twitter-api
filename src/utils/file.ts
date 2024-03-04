@@ -5,7 +5,7 @@ import path from 'path'
 import { UPLOAD_IMAGE_TEMP_DIR, UPLOAD_VIDEO_DIR, UPLOAD_VIDEO_TEMP_DIR } from '~/constants/dir'
 
 const MAX_IMAGES = 4
-const MAX_VIDEOS = 3
+const MAX_VIDEOS = 1
 
 /**
  * create /uploads folder
@@ -47,18 +47,28 @@ export const handleUploadImage = async (req: Request) => {
 }
 
 export const handleUploadVideo = async (req: Request) => {
+  const nanoId = (await import('nanoid')).nanoid
+  const idName = nanoId()
+  const uploadDir = path.resolve(UPLOAD_VIDEO_DIR, idName)
+  fs.mkdirSync(uploadDir, {
+    recursive: true //allow creating nested dir, false -> error is raised
+  })
+
   const form = formidable({
-    uploadDir: UPLOAD_VIDEO_DIR,
+    uploadDir: uploadDir,
     maxFiles: MAX_VIDEOS,
     keepExtensions: true,
-    maxFileSize: 30 * 1024 * 1024, //3MB
-    maxTotalFileSize: MAX_VIDEOS * 3 * 1024 * 1024,
+    maxFileSize: 10 * 1024 * 1024, //10MB
+    maxTotalFileSize: MAX_VIDEOS * 10 * 1024 * 1024,
     filter: function ({ name, originalFilename, mimetype }) {
       const valid = name === 'video' && Boolean(mimetype?.includes('mp4') || mimetype?.includes('quicktime'))
       if (!valid) {
         form.emit('error' as any, new Error('Video is not valid') as any)
       }
       return valid
+    },
+    filename(name, ext, part, form) {
+      return idName + ext
     }
   })
   return new Promise<File[]>((resolve, reject) => {

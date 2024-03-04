@@ -1,5 +1,10 @@
 import { Router } from 'express'
-import { serveImageController, serveVideoStreamController } from '~/controllers/static.controllers'
+import {
+  serveImageController,
+  serveM3u8Controller,
+  serveSegmentController,
+  serveVideoStreamController
+} from '~/controllers/static.controllers'
 import { accessTokenValidator, verifiedUserValidator } from '~/middlewares/users.middleware'
 import { wrapRequestHandler } from '~/utils/handlers'
 
@@ -17,6 +22,20 @@ staticRouter.get(
   // accessTokenValidator,
   // verifiedUserValidator,
   wrapRequestHandler(serveVideoStreamController)
+)
+
+staticRouter.get(
+  '/video-hls/:id/master.m3u8',
+  // accessTokenValidator,
+  // verifiedUserValidator,
+  wrapRequestHandler(serveM3u8Controller)
+)
+
+staticRouter.get(
+  '/video-hls/:id/:v/:segment',
+  // accessTokenValidator,
+  // verifiedUserValidator,
+  wrapRequestHandler(serveSegmentController)
 )
 
 export default staticRouter

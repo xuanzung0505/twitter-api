@@ -40,3 +40,22 @@ export const serveVideoStreamController: RequestHandler = async (req: Request, r
   const videoStream = fs.createReadStream(videoPath, { start, end })
   videoStream.pipe(res)
 }
+
+export const serveM3u8Controller: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  return res.sendFile(path.resolve(UPLOAD_VIDEO_DIR, id, 'master.m3u8'), (err) => {
+    if (err) {
+      res.status((err as any).status).send('Not found')
+    }
+  })
+}
+
+export const serveSegmentController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+  const { id, v, segment } = req.params
+  //segment: 0.ts, 1.ts,...
+  return res.sendFile(path.resolve(UPLOAD_VIDEO_DIR, id, v, segment), (err) => {
+    if (err) {
+      res.status((err as any).status).send('Not found')
+    }
+  })
+}
