@@ -9,8 +9,10 @@ import {
   DB_NAME,
   DB_USERS_COLLECTION,
   DB_REFRESH_TOKENS_COLLECTION,
-  DB_FOLLOWERS_COLLECTION
+  DB_FOLLOWERS_COLLECTION,
+  DB_VIDEO_STATUS_COLLECTION
 } from '~/utils/getEnv'
+import VideoStatus from '~/models/schemas/VideoStatus.schema'
 
 const uri = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@root.8d0hemf.mongodb.net/?retryWrites=true&w=majority`
 
@@ -51,6 +53,9 @@ class DatabaseService {
   }
   get followers(): Collection<Follower> {
     return this.db.collection(DB_FOLLOWERS_COLLECTION as string)
+  }
+  get videoStatus(): Collection<VideoStatus> {
+    return this.db.collection(DB_VIDEO_STATUS_COLLECTION as string)
   }
 }
 

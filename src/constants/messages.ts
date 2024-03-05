@@ -65,5 +65,6 @@ export const USERS_MESSAGES = {
   UNFOLLOW_SUCCESS: 'Unfollow user successfully',
   UNFOLLOW_ALREADY: 'Unfollow user already',
   //MEDIA
-  UPLOAD_SUCCESSFULLY: 'Upload successfully'
+  UPLOAD_SUCCESSFULLY: 'Upload successfully',
+  GET_VIDEO_STATUS_SUCCESS: 'Get video status successfully'
 } as const

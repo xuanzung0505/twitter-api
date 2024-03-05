@@ -10,32 +10,32 @@ import { wrapRequestHandler } from '~/utils/handlers'
 
 const staticRouter = Router()
 
-staticRouter.get(
-  '/image/:name',
-  // accessTokenValidator,
-  // verifiedUserValidator,
-  wrapRequestHandler(serveImageController)
-)
+/**
+ * Description: get an image
+ * Path: /image/:name
+ * Method: GET
+ */
+staticRouter.get('/image/:name', wrapRequestHandler(serveImageController))
 
-staticRouter.get(
-  '/video-stream/:name',
-  // accessTokenValidator,
-  // verifiedUserValidator,
-  wrapRequestHandler(serveVideoStreamController)
-)
+/**
+ * Description: stream a video
+ * Path: /video-stream/:name
+ * Method: GET
+ */
+staticRouter.get('/video-stream/:name', wrapRequestHandler(serveVideoStreamController))
 
-staticRouter.get(
-  '/video-hls/:id/master.m3u8',
-  // accessTokenValidator,
-  // verifiedUserValidator,
-  wrapRequestHandler(serveM3u8Controller)
-)
+/**
+ * Description: stream a HLS video
+ * Path: /video-hls/:id/master.m3u8
+ * Method: GET
+ */
+staticRouter.get('/video-hls/:id/master.m3u8', wrapRequestHandler(serveM3u8Controller))
 
-staticRouter.get(
-  '/video-hls/:id/:v/:segment',
-  // accessTokenValidator,
-  // verifiedUserValidator,
-  wrapRequestHandler(serveSegmentController)
-)
+/**
+ * Description: serve segments for a HLS video
+ * Path: /video-hls/:id/:v/:segment
+ * Method: GET
+ */
+staticRouter.get('/video-hls/:id/:v/:segment', wrapRequestHandler(serveSegmentController))
 
 export default staticRouter
