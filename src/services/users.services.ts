@@ -39,11 +39,18 @@ class UserService {
   }
 
   private signRefreshToken({ user_id, verify, exp }: { user_id: string; verify: UserVerifyStatus; exp?: number }) {
+    if (exp) {
+      return signToken({
+        payload: { user_id, verify, token_type: TokenType.RefreshToken, exp },
+        secret: JWT_SECRET_REFRESH_TOKEN as string,
+        options: {}
+      })
+    }
     return signToken({
       payload: { user_id, verify, token_type: TokenType.RefreshToken },
       secret: JWT_SECRET_REFRESH_TOKEN as string,
       options: {
-        expiresIn: exp ?? (REFRESH_TOKEN_EXPIRES_IN as string)
+        expiresIn: REFRESH_TOKEN_EXPIRES_IN as string
       }
     })
   }
@@ -125,7 +132,7 @@ class UserService {
     })
     const hashedPassword = await hashPassword(payload.password)
     //1.insert
-    const insertResult = await databaseService.users.insertOne(
+    await databaseService.users.insertOne(
       new User({
         ...payload,
         _id: user_id,
@@ -250,7 +257,7 @@ class UserService {
     //delete current refresh_token
     //create new refresh_token + new access_token, retain old refresh_token's exp date
     //save new refresh_token
-    const [deleleResult, access_token, refresh_token] = await Promise.all([
+    const [, access_token, refresh_token] = await Promise.all([
       databaseService.refreshTokens.deleteOne({ token: old_refresh_token }),
       this.signAccessToken({ user_id, verify }),
       this.signRefreshToken({ user_id, verify, exp })

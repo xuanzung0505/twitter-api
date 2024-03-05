@@ -1,5 +1,4 @@
 import { Collection, Db, MongoClient, ServerApiVersion } from 'mongodb'
-import { config } from 'dotenv'
 import User from '~/models/schemas/User.schema'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import Follower from '~/models/schemas/Follower.schema'
@@ -43,6 +42,26 @@ class DatabaseService {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  async indexUsers() {
+    const exists = await this.users.indexExists('email_1')
+    if (!exists) this.users.createIndex({ email: 1 }, { unique: true })
+  }
+
+  async indexRefreshTokens() {
+    const exists = await this.refreshTokens.indexExists('token_1')
+    if (!exists) this.refreshTokens.createIndex({ token: 1 })
+  }
+
+  async indexFollowers() {
+    const exists = await this.followers.indexExists('user_id_1_followed_user_id_1')
+    if (!exists) this.followers.createIndex({ user_id: 1, followed_user_id: 1 })
+  }
+
+  async indexVideoStatus() {
+    const exists = await this.videoStatus.indexExists('name_1')
+    if (!exists) this.videoStatus.createIndex({ name: 1 })
   }
 
   get users(): Collection<User> {
