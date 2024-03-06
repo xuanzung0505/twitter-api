@@ -70,3 +70,16 @@ export const USERS_MESSAGES = {
   UPLOAD_SUCCESSFULLY: 'Upload successfully',
   GET_VIDEO_STATUS_SUCCESS: 'Get video status successfully'
 } as const
+
+export const TWEET_MESSAGES = {
+  //VALIDATING ERRORS
+  TWEET_TYPE_IS_INVALID: 'Tweet type is invalid',
+  TWEET_AUDIENCE_IS_INVALID: 'Tweet audience is invalid',
+  TWEET_CONTENT_MUST_BE_NULL_OR_A_NON_EMPTY_STRING: 'Tweet content must be null or a non-empty string',
+  TWEET_PARENT_ID_MUST_BE_NULL_OR_A_VALID_OBJECT_ID: 'Tweet parent_id must be null or a valid objectId',
+  TWEET_HASHTAGS_MUST_BE_AN_ARRAY_OF_STRING: 'Tweet hashtags must be an array of string',
+  TWEET_HASHTAGS_MUST_START_WITH_AN_ENGLISH_ALPHABET_CHARACTER: 'Tweet hashtags must start with a-z or A-Z',
+  TWEET_MENTIONS_MUST_BE_AN_ARRAY_OF_OBJECT_ID: 'Tweet mentions must be an array of objectId',
+  TWEET_MEDIAS_MUST_BE_AN_ARRAY_OF_MEDIA_OBJECT: 'Tweet medias must be an array of media object',
+  TWEET_SUCCESSFULLY: 'Tweet successfully'
+} as const

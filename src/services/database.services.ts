@@ -9,9 +9,11 @@ import {
   DB_USERS_COLLECTION,
   DB_REFRESH_TOKENS_COLLECTION,
   DB_FOLLOWERS_COLLECTION,
-  DB_VIDEO_STATUS_COLLECTION
+  DB_VIDEO_STATUS_COLLECTION,
+  DB_TWEETS_COLLECTION
 } from '~/utils/getEnv'
 import VideoStatus from '~/models/schemas/VideoStatus.schema'
+import Tweet from '~/models/schemas/Tweet.schema'
 
 const uri = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@root.8d0hemf.mongodb.net/?retryWrites=true&w=majority`
 
@@ -78,6 +80,9 @@ class DatabaseService {
   }
   get videoStatus(): Collection<VideoStatus> {
     return this.db.collection(DB_VIDEO_STATUS_COLLECTION as string)
+  }
+  get tweets(): Collection<Tweet> {
+    return this.db.collection(DB_TWEETS_COLLECTION as string)
   }
 }
 

@@ -1,7 +1,7 @@
 import { Request } from 'express'
 import User from './models/schemas/User.schema'
 import { JwtPayload } from 'jsonwebtoken'
-import { TokenPayload } from './models/requests/user.requests'
+import { TokenPayload } from './models/requests/User.requests'
 
 declare module 'express' {
   interface Request {
