@@ -45,8 +45,11 @@ class DatabaseService {
   }
 
   async indexUsers() {
-    const exists = await this.users.indexExists('email_1')
-    if (!exists) this.users.createIndex({ email: 1 }, { unique: true })
+    const exists = await this.users.indexExists(['email_1', 'username_1'])
+    if (!exists) {
+      this.users.createIndex({ email: 1 }, { unique: true })
+      this.users.createIndex({ username: 1 }, { unique: true })
+    }
   }
 
   async indexRefreshTokens() {

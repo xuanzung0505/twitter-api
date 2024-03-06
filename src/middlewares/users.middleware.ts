@@ -510,6 +510,19 @@ export const verifiedUserValidator = (req: Request, res: Response, next: NextFun
   return next()
 }
 
+export const getUserByUsernameValidator = validate(
+  checkSchema(
+    {
+      username: {
+        isString: { errorMessage: USERS_MESSAGES.USERNAME_MUST_BE_A_STRING },
+        trim: true,
+        notEmpty: { errorMessage: USERS_MESSAGES.USERNAME_IS_REQUIRED }
+      }
+    },
+    ['params']
+  )
+)
+
 export const updateMeValidator = validate(
   checkSchema(
     {

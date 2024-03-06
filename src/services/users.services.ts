@@ -367,6 +367,14 @@ class UserService {
     return user
   }
 
+  async getUserByUsername(username: string) {
+    const user = await databaseService.users.findOne(
+      { username: username },
+      { projection: { password: 0, email_verify_token: 0, forgot_password_token: 0 } }
+    )
+    return user
+  }
+
   async updateMe(user_id: string, payload: UpdateMeRequestBody) {
     const _payload = payload.date_of_birth ? { ...payload, date_of_birth: new Date(payload.date_of_birth) } : payload
     const user = await databaseService.users.findOneAndUpdate(

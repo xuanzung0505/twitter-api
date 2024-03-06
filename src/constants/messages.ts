@@ -14,6 +14,7 @@ export const USERS_MESSAGES = {
   USERNAME_LENGTH_MUST_BE_FROM_4_TO_15: 'Username length must be from 4 to 15',
   USERNAME_IS_INVALID:
     'Username must be 4-15 characters long and must contain at least 1 letter, numbers and underscores',
+  USERNAME_IS_REQUIRED: 'Username is required',
   USER_ALREADY_EXISTS: 'User already exists',
   IMAGE_URL_MUST_BE_A_STRING: 'Avatar must be a string',
   IMAGE_URL_LENGTH_MUST_BE_FROM_1_TO_100: 'Avatar length must be from 1 to 100',
@@ -57,6 +58,7 @@ export const USERS_MESSAGES = {
   VERIFY_EMAIL_VERIFY_TOKEN_SUCCESS: 'Verify email verify token successfully',
   VERIFY_FORGOT_PASSWORD_TOKEN_SUCCESS: 'Verify forgot password token successfully',
   GET_ME_SUCCESS: 'Get my profile successfully',
+  GET_USER_USERNAME_SUCCESS: 'Get user profile by username successfully',
   UPDATE_ME_SUCCESS: 'Update my profile successfully',
   USER_ID_MUST_BE_A_STRING: 'user_id must be a string',
   USER_ID_IS_REQUIRED: 'user_id is required',

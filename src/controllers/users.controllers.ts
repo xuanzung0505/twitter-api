@@ -190,6 +190,24 @@ export const getMeController: RequestHandler = async (
   })
 }
 
+export const getUserByUsernameController: RequestHandler = async (
+  req: Request<ParamsDictionary, any, LogoutRequestBody, Query, Record<string, any>>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { username } = req.params
+  const result = await userService.getUserByUsername(username)
+  if (result)
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.GET_USER_USERNAME_SUCCESS,
+      result
+    })
+
+  return res.status(HTTP_STATUS.NOT_FOUND).json({
+    message: USERS_MESSAGES.USER_NOT_FOUND
+  })
+}
+
 export const updateMeController: RequestHandler = async (
   req: Request<ParamsDictionary, any, UpdateMeRequestBody, Query, Record<string, any>>,
   res: Response,

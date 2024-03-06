@@ -13,7 +13,8 @@ import {
   followController,
   unfollowController,
   refreshTokenController,
-  googleOAuthController
+  googleOAuthController,
+  getUserByUsernameController
 } from '~/controllers/users.controllers'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
 import {
@@ -21,6 +22,7 @@ import {
   emailVerifyValidator,
   followValidator,
   forgotPasswordValidator,
+  getUserByUsernameValidator,
   loginValidator,
   oldPasswordValidator,
   refreshTokenValidator,
@@ -136,6 +138,13 @@ userRouter.post(
  * Header: {Authorization: Bearer <access_token>}
  */
 userRouter.get('/me', accessTokenValidator, wrapRequestHandler(getMeController))
+
+/**
+ * Description: Get user profile by username
+ * Path: /:username
+ * Method: GET
+ */
+userRouter.get('/:username', getUserByUsernameValidator, wrapRequestHandler(getUserByUsernameController))
 
 /**
  * Description: Update my profile
