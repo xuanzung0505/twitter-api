@@ -83,7 +83,19 @@ export const TWEET_MESSAGES = {
   TWEET_MENTIONS_MUST_BE_AN_ARRAY_OF_OBJECT_ID: 'Tweet mentions must be an array of objectId',
   TWEET_MEDIAS_MUST_BE_AN_ARRAY_OF_MEDIA_OBJECT: 'Tweet medias must be an array of media object',
   CREATE_TWEET_SUCCESSFULLY: 'Create tweet successfully',
-  TWEET_ID_MUST_BE_A_STRING: 'Tweet id must be a string',
-  TWEET_ID_IS_INVALID: 'Tweet id is invalid',
+  TWEET_ID_MUST_BE_A_STRING: 'Tweet_id must be a string',
+  TWEET_ID_IS_INVALID: 'Tweet_id is invalid',
   GET_TWEET_SUCCESSFULLY: 'Get tweet successfully'
+} as const
+
+export const BOOKMARK_MESSAGES = {
+  //VALIDATING ERRORS
+  ALREADY_ADDED_TO_BOOKMARKS: 'Already added to bookmarks',
+  ADD_TO_BOOKMARKS_SUCCESSFULLY: 'Add to bookmarks successfully',
+  ADD_TO_BOOKMARKS_FAILED: 'Add to bookmarks failed',
+  ID_MUST_BE_A_STRING: 'Id must be a string',
+  ID_IS_INVALID: 'Id is invalid',
+  ONLY_THE_OWNERS_CAN_REMOVE_FROM_BOOKMARKS: 'Only the owners can remove from their bookmarks',
+  REMOVE_FROM_BOOKMARKS_SUCCESSFULLY: 'Remove from bookmarks successfully',
+  REMOVE_FROM_BOOKMARKS_FAILED: 'Remove from bookmarks failed'
 } as const
