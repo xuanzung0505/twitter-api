@@ -10,10 +10,12 @@ import {
   DB_REFRESH_TOKENS_COLLECTION,
   DB_FOLLOWERS_COLLECTION,
   DB_VIDEO_STATUS_COLLECTION,
-  DB_TWEETS_COLLECTION
+  DB_TWEETS_COLLECTION,
+  DB_HASHTAGS_COLLECTION
 } from '~/utils/getEnv'
 import VideoStatus from '~/models/schemas/VideoStatus.schema'
 import Tweet from '~/models/schemas/Tweet.schema'
+import Hashtag from '~/models/schemas/Hashtag.schema'
 
 const uri = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@root.8d0hemf.mongodb.net/?retryWrites=true&w=majority`
 
@@ -83,6 +85,9 @@ class DatabaseService {
   }
   get tweets(): Collection<Tweet> {
     return this.db.collection(DB_TWEETS_COLLECTION as string)
+  }
+  get hashtags(): Collection<Hashtag> {
+    return this.db.collection(DB_HASHTAGS_COLLECTION as string)
   }
 }
 

@@ -73,13 +73,17 @@ export const USERS_MESSAGES = {
 
 export const TWEET_MESSAGES = {
   //VALIDATING ERRORS
+  TWEET_NOT_FOUND: 'Tweet not found',
   TWEET_TYPE_IS_INVALID: 'Tweet type is invalid',
   TWEET_AUDIENCE_IS_INVALID: 'Tweet audience is invalid',
   TWEET_CONTENT_MUST_BE_NULL_OR_A_NON_EMPTY_STRING: 'Tweet content must be null or a non-empty string',
   TWEET_PARENT_ID_MUST_BE_NULL_OR_A_VALID_OBJECT_ID: 'Tweet parent_id must be null or a valid objectId',
-  TWEET_HASHTAGS_MUST_BE_AN_ARRAY_OF_STRING: 'Tweet hashtags must be an array of string',
-  TWEET_HASHTAGS_MUST_START_WITH_AN_ENGLISH_ALPHABET_CHARACTER: 'Tweet hashtags must start with a-z or A-Z',
+  TWEET_HASHTAGS_MUST_BE_AN_ARRAY_OF_HASHTAG_OBJECT: 'Tweet hashtags must be an array of hashtag object',
+  TWEET_HASHTAGS_NAMES_MUST_START_WITH_AN_ENGLISH_ALPHABET_CHARACTER: 'Tweet hashtags names must start with a-z or A-Z',
   TWEET_MENTIONS_MUST_BE_AN_ARRAY_OF_OBJECT_ID: 'Tweet mentions must be an array of objectId',
   TWEET_MEDIAS_MUST_BE_AN_ARRAY_OF_MEDIA_OBJECT: 'Tweet medias must be an array of media object',
-  TWEET_SUCCESSFULLY: 'Tweet successfully'
+  CREATE_TWEET_SUCCESSFULLY: 'Create tweet successfully',
+  TWEET_ID_MUST_BE_A_STRING: 'Tweet id must be a string',
+  TWEET_ID_IS_INVALID: 'Tweet id is invalid',
+  GET_TWEET_SUCCESSFULLY: 'Get tweet successfully'
 } as const
