@@ -79,6 +79,8 @@ export const TWEET_MESSAGES = {
   //VALIDATING ERRORS
   TWEET_NOT_FOUND: 'Tweet not found',
   TWEET_TYPE_IS_INVALID: 'Tweet type is invalid',
+  NORMAL_TWEET_MUST_HAVE_NULL_PARENT_ID: 'A normal tweet must have a null parent_id',
+  A_RETWEET_MUST_NOT_HAVE_MEDIAS: 'A retweet must not have medias attached',
   TWEET_AUDIENCE_IS_INVALID: 'Tweet audience is invalid',
   TWEET_CONTENT_MUST_BE_A_STRING: 'Tweet content must be a string',
   TWEET_CONTENT_MUST_NOT_BE_EMPTY: 'Tweet content must not be empty',

@@ -20,33 +20,21 @@ export const createTweetValidator = validate(
     {
       type: {
         isIn: { options: [tweetTypeEnum] },
-        errorMessage: TWEET_MESSAGES.TWEET_TYPE_IS_INVALID,
-        custom: {
-          options: async (value, { req }) => {
-            if (value !== TweetType.Tweet) {
-              const { parent_id } = req.body
-              const isValidParentId = parent_id === null || ObjectId.isValid(parent_id)
-              if (!isValidParentId) throw new Error(TWEET_MESSAGES.TWEET_PARENT_ID_MUST_BE_NULL_OR_A_VALID_OBJECT_ID)
-              //if value exists, the tweet type must be a retweet/quoted retweet or a comment with its attached parent
-              if (parent_id) {
-                if (value === TweetType.Tweet) throw new Error(TWEET_MESSAGES.TWEET_TYPE_IS_INVALID)
-                const parent = await databaseService.tweets.findOne({ _id: new ObjectId(parent_id) })
-                if (!parent)
-                  throw new ErrorWithStatus({
-                    message: TWEET_MESSAGES.TWEET_NOT_FOUND,
-                    status: HTTP_STATUS.NOT_FOUND
-                  })
-              } else {
-                //value doesn't exist, so it must be a tweet
-                if (value !== TweetType.Tweet) throw new Error(TWEET_MESSAGES.TWEET_TYPE_IS_INVALID)
-              }
-            }
-            return true
-          }
-        }
+        errorMessage: TWEET_MESSAGES.TWEET_TYPE_IS_INVALID
       },
       audience: {
         isIn: { options: [tweetAudienceEnum] },
+        custom: {
+          options: (value, { req }) => {
+            if (value != TweetAudience.Everyone) {
+              throw new ErrorWithStatus({
+                message: COMMON_MESSAGES.THIS_FEATURE_WILL_BE_AVAILABLE_SOON,
+                status: HTTP_STATUS.FORBIDDEN
+              })
+            }
+            return true
+          }
+        },
         errorMessage: TWEET_MESSAGES.TWEET_AUDIENCE_IS_INVALID
       },
       content: {
@@ -58,12 +46,12 @@ export const createTweetValidator = validate(
           options: (value: string, { req }) => {
             const { type } = req.body
             const medias = req.body.medias as Media[]
-            //only the retweeted tweet may have its content empty, unless there are medias attached
-            if (type != TweetType.Retweet) {
+            //only the retweeted tweet may have its content empty, unless there are medias attached to the current tweet
+            if (type === TweetType.Retweet) {
+              if (value.length > 0) throw new Error(TWEET_MESSAGES.TWEET_CONTENT_MUST_BE_EMPTY)
+            } else {
               if (value.length === 0 && medias.length === 0)
                 throw new Error(TWEET_MESSAGES.TWEET_CONTENT_MUST_NOT_BE_EMPTY)
-            } else {
-              if (value.length > 0) throw new Error(TWEET_MESSAGES.TWEET_CONTENT_MUST_BE_EMPTY)
             }
             return true
           }
@@ -76,7 +64,8 @@ export const createTweetValidator = validate(
             if (!isValidParentId) throw new Error(TWEET_MESSAGES.TWEET_PARENT_ID_MUST_BE_NULL_OR_A_VALID_OBJECT_ID)
             //if value exists, the tweet type must be a retweet/quoted retweet or a comment with its attached parent
             if (value) {
-              if (req.body.type === TweetType.Tweet) throw new Error(TWEET_MESSAGES.TWEET_TYPE_IS_INVALID)
+              if (req.body.type === TweetType.Tweet)
+                throw new Error(TWEET_MESSAGES.NORMAL_TWEET_MUST_HAVE_NULL_PARENT_ID)
               const parent = await databaseService.tweets.findOne({ _id: new ObjectId(value) })
               if (!parent)
                 throw new ErrorWithStatus({
@@ -84,8 +73,9 @@ export const createTweetValidator = validate(
                   status: HTTP_STATUS.NOT_FOUND
                 })
             } else {
-              //value doesn't exist, so it must be a tweet
-              if (req.body.type != TweetType.Tweet) throw new Error(TWEET_MESSAGES.TWEET_TYPE_IS_INVALID)
+              //value doesn't exist, so it must be a normal tweet
+              if (req.body.type != TweetType.Tweet)
+                throw new Error(TWEET_MESSAGES.NORMAL_TWEET_MUST_HAVE_NULL_PARENT_ID)
             }
             return true
           }
@@ -122,10 +112,16 @@ export const createTweetValidator = validate(
         isArray: true,
         custom: {
           options: (values: any[], { req }) => {
-            //must be an array of Media object
-            return values.every((value: any) => {
-              return typeof value.url === 'string' && mediaTypeEnum.includes(value.type)
-            })
+            if (values.length > 0) {
+              const { type } = req.body
+              if (type === TweetType.Retweet) throw new Error(TWEET_MESSAGES.A_RETWEET_MUST_NOT_HAVE_MEDIAS)
+              //must be an array of Media object
+              const isMediaArray = values.every((value: any) => {
+                return typeof value.url === 'string' && mediaTypeEnum.includes(value.type)
+              })
+              return isMediaArray
+            }
+            return true
           }
         },
         errorMessage: TWEET_MESSAGES.TWEET_MEDIAS_MUST_BE_AN_ARRAY_OF_MEDIA_OBJECT
