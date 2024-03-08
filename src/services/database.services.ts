@@ -75,6 +75,16 @@ class DatabaseService {
     if (!exists) this.videoStatus.createIndex({ name: 1 })
   }
 
+  async indexBookmarks() {
+    const exists = await this.bookmarks.indexExists('tweet_id_1')
+    if (!exists) this.bookmarks.createIndex({ tweet_id: 1 })
+  }
+
+  async indexLikes() {
+    const exists = await this.likes.indexExists('tweet_id_1')
+    if (!exists) this.likes.createIndex({ tweet_id: 1 })
+  }
+
   get users(): Collection<User> {
     return this.db.collection(DB_USERS_COLLECTION as string)
   }

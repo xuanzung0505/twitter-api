@@ -9,6 +9,8 @@ databaseService.connect().then(() => {
   databaseService.indexRefreshTokens()
   databaseService.indexFollowers()
   databaseService.indexVideoStatus()
+  databaseService.indexBookmarks()
+  databaseService.indexLikes()
 })
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`)

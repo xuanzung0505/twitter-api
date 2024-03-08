@@ -27,8 +27,8 @@ export enum EncodeStatus {
 export enum TweetType {
   Tweet,
   Retweet,
-  Comment,
-  QuoteTweet
+  QuoteTweet,
+  Comment
 }
 
 export enum TweetAudience {

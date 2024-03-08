@@ -5,6 +5,7 @@ import { MediaType, TweetAudience, TweetType, UserVerifyStatus } from '~/constan
 import HTTP_STATUS from '~/constants/httpStatus'
 import { COMMON_MESSAGES, TWEET_MESSAGES, USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
+import { Media } from '~/models/Others'
 import Tweet from '~/models/schemas/Tweet.schema'
 import databaseService from '~/services/database.services'
 import { convertEnumToArray } from '~/utils/commons'
@@ -19,33 +20,72 @@ export const createTweetValidator = validate(
     {
       type: {
         isIn: { options: [tweetTypeEnum] },
-        errorMessage: TWEET_MESSAGES.TWEET_TYPE_IS_INVALID
+        errorMessage: TWEET_MESSAGES.TWEET_TYPE_IS_INVALID,
+        custom: {
+          options: async (value, { req }) => {
+            if (value !== TweetType.Tweet) {
+              const { parent_id } = req.body
+              const isValidParentId = parent_id === null || ObjectId.isValid(parent_id)
+              if (!isValidParentId) throw new Error(TWEET_MESSAGES.TWEET_PARENT_ID_MUST_BE_NULL_OR_A_VALID_OBJECT_ID)
+              //if value exists, the tweet type must be a retweet/quoted retweet or a comment with its attached parent
+              if (parent_id) {
+                if (value === TweetType.Tweet) throw new Error(TWEET_MESSAGES.TWEET_TYPE_IS_INVALID)
+                const parent = await databaseService.tweets.findOne({ _id: new ObjectId(parent_id) })
+                if (!parent)
+                  throw new ErrorWithStatus({
+                    message: TWEET_MESSAGES.TWEET_NOT_FOUND,
+                    status: HTTP_STATUS.NOT_FOUND
+                  })
+              } else {
+                //value doesn't exist, so it must be a tweet
+                if (value !== TweetType.Tweet) throw new Error(TWEET_MESSAGES.TWEET_TYPE_IS_INVALID)
+              }
+            }
+            return true
+          }
+        }
       },
       audience: {
         isIn: { options: [tweetAudienceEnum] },
         errorMessage: TWEET_MESSAGES.TWEET_AUDIENCE_IS_INVALID
       },
       content: {
-        custom: {
-          options: (value, { req }) => {
-            return value === null || (typeof value === 'string' && value.trim().length > 0)
-          }
+        isString: {
+          errorMessage: TWEET_MESSAGES.TWEET_CONTENT_MUST_BE_A_STRING
         },
-        errorMessage: TWEET_MESSAGES.TWEET_CONTENT_MUST_BE_NULL_OR_A_NON_EMPTY_STRING
+        trim: true,
+        custom: {
+          options: (value: string, { req }) => {
+            const { type } = req.body
+            const medias = req.body.medias as Media[]
+            //only the retweeted tweet may have its content empty, unless there are medias attached
+            if (type != TweetType.Retweet) {
+              if (value.length === 0 && medias.length === 0)
+                throw new Error(TWEET_MESSAGES.TWEET_CONTENT_MUST_NOT_BE_EMPTY)
+            } else {
+              if (value.length > 0) throw new Error(TWEET_MESSAGES.TWEET_CONTENT_MUST_BE_EMPTY)
+            }
+            return true
+          }
+        }
       },
       parent_id: {
         custom: {
           options: async (value: null | string, { req }) => {
             const isValidParentId = value === null || ObjectId.isValid(value)
             if (!isValidParentId) throw new Error(TWEET_MESSAGES.TWEET_PARENT_ID_MUST_BE_NULL_OR_A_VALID_OBJECT_ID)
-            //CHECK parent exists
+            //if value exists, the tweet type must be a retweet/quoted retweet or a comment with its attached parent
             if (value) {
+              if (req.body.type === TweetType.Tweet) throw new Error(TWEET_MESSAGES.TWEET_TYPE_IS_INVALID)
               const parent = await databaseService.tweets.findOne({ _id: new ObjectId(value) })
               if (!parent)
                 throw new ErrorWithStatus({
                   message: TWEET_MESSAGES.TWEET_NOT_FOUND,
                   status: HTTP_STATUS.NOT_FOUND
                 })
+            } else {
+              //value doesn't exist, so it must be a tweet
+              if (req.body.type != TweetType.Tweet) throw new Error(TWEET_MESSAGES.TWEET_TYPE_IS_INVALID)
             }
             return true
           }
