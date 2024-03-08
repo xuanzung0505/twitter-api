@@ -96,6 +96,19 @@ export const BOOKMARK_MESSAGES = {
   ID_MUST_BE_A_STRING: 'Id must be a string',
   ID_IS_INVALID: 'Id is invalid',
   ONLY_THE_OWNERS_CAN_REMOVE_FROM_BOOKMARKS: 'Only the owners can remove from their bookmarks',
+  BOOKMARK_NOT_FOUND: 'Bookmark not found',
   REMOVE_FROM_BOOKMARKS_SUCCESSFULLY: 'Remove from bookmarks successfully',
   REMOVE_FROM_BOOKMARKS_FAILED: 'Remove from bookmarks failed'
+} as const
+
+export const LIKE_MESSAGES = {
+  //VALIDATING ERRORS
+  LIKE_SUCCESSFULLY: 'Like successfully',
+  LIKE_FAILED: 'Like failed',
+  LIKE_ID_MUST_BE_A_STRING: 'Like_id must be a string',
+  LIKE_ID_IS_INVALID: 'Like_id is invalid',
+  ONLY_THE_OWNERS_CAN_UNLIKE: 'Only the owners can unlike their liked tweets',
+  LIKE_NOT_FOUND: 'Like not found',
+  UNLIKE_SUCCESSFULLY: 'Unlike successfully',
+  UNLIKE_FAILED: 'Unlike failed'
 } as const

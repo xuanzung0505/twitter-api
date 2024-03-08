@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { addToBookmarksController, removeFromBookmarksController } from '~/controllers/bookmarks.controllers'
-import { addToBookmarksValidator, removeFromBookmarksValidator } from '~/middlewares/bookmarks.middlewares'
+import { removeFromBookmarksValidator } from '~/middlewares/bookmarks.middlewares'
+import { tweetValidator } from '~/middlewares/tweets.middlewares'
 import { accessTokenValidator, verifiedUserValidator } from '~/middlewares/users.middleware'
 import { wrapRequestHandler } from '~/utils/handlers'
 
@@ -16,7 +17,7 @@ bookmarkRouter.post(
   '/:tweet_id',
   accessTokenValidator,
   verifiedUserValidator,
-  addToBookmarksValidator,
+  tweetValidator,
   wrapRequestHandler(addToBookmarksController)
 )
 

@@ -93,6 +93,30 @@ export const createTweetValidator = validate(
   )
 )
 
+export const tweetValidator = validate(
+  checkSchema(
+    {
+      tweet_id: {
+        isString: { errorMessage: TWEET_MESSAGES.TWEET_ID_MUST_BE_A_STRING },
+        trim: true,
+        custom: {
+          options: async (value, { req }) => {
+            if (!ObjectId.isValid(value)) throw new Error(TWEET_MESSAGES.TWEET_ID_IS_INVALID)
+            const tweet = await databaseService.tweets.findOne({ _id: new ObjectId(value) })
+            if (!tweet)
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.NOT_FOUND,
+                message: TWEET_MESSAGES.TWEET_NOT_FOUND
+              })
+            return true
+          }
+        }
+      }
+    },
+    ['params']
+  )
+)
+
 export const getTweetByIDValidator = validate(
   checkSchema(
     {
