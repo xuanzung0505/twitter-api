@@ -588,3 +588,18 @@ export const unfollowValidator = validate(
     ['params']
   )
 )
+
+/**
+  If the user is logged in, then run the middleware function to validate tokens,
+  otherwise the user must be a guest, and is allowed to something without logging in
+*/
+export const isUserLoggedInValidator = (middleware: (req: Request, res: Response, next: NextFunction) => void) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const authorization = req.headers.authorization
+    const access_token = authorization ? authorization.split(' ')[1] : null
+    if (authorization && access_token != 'null') {
+      return middleware(req, res, next)
+    }
+    next()
+  }
+}

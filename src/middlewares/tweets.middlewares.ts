@@ -1,9 +1,11 @@
+import { NextFunction, Request, RequestHandler, Response } from 'express'
 import { check, checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
-import { MediaType, TweetAudience, TweetType } from '~/constants/enums'
+import { MediaType, TweetAudience, TweetType, UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { TWEET_MESSAGES } from '~/constants/messages'
+import { COMMON_MESSAGES, TWEET_MESSAGES, USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
+import Tweet from '~/models/schemas/Tweet.schema'
 import databaseService from '~/services/database.services'
 import { convertEnumToArray } from '~/utils/commons'
 import { validate } from '~/utils/validation'
@@ -93,6 +95,9 @@ export const createTweetValidator = validate(
   )
 )
 
+/**
+ * Look for tweet by param :tweet_id in the database and confirm if the tweet exists or not
+ */
 export const tweetValidator = validate(
   checkSchema(
     {
@@ -117,6 +122,10 @@ export const tweetValidator = validate(
   )
 )
 
+/**
+ * Look for tweet by param :id in the database and confirm if the tweet exists or not,
+ * then attach it to the request
+ */
 export const getTweetByIDValidator = validate(
   checkSchema(
     {
@@ -128,6 +137,13 @@ export const getTweetByIDValidator = validate(
         custom: {
           options: async (value: string, { req }) => {
             if (!ObjectId.isValid(value)) throw new Error(TWEET_MESSAGES.TWEET_ID_IS_INVALID)
+            const tweet = await databaseService.tweets.findOne({ _id: new ObjectId(value) })
+            if (!tweet)
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.NOT_FOUND,
+                message: TWEET_MESSAGES.TWEET_NOT_FOUND
+              })
+            ;(req as Request).tweet = tweet
             return true
           }
         }
@@ -136,3 +152,35 @@ export const getTweetByIDValidator = validate(
     ['params']
   )
 )
+
+/**
+ * Handle different tweet.audience cases
+ */
+export const tweetAudienceValidator = (req: Request, res: Response, next: NextFunction) => {
+  const tweet = req.tweet as Tweet
+  //tweet audience FUTURE FEATURE
+  if (tweet.audience != TweetAudience.Everyone) {
+    console.log('tweet audience', TweetAudience[tweet.audience])
+    throw new ErrorWithStatus({
+      status: HTTP_STATUS.FORBIDDEN,
+      message: COMMON_MESSAGES.THIS_FEATURE_WILL_BE_AVAILABLE_SOON
+    })
+  }
+  next()
+}
+
+/**
+ * Check tweet.author validity.
+ * If the author is banned, return USER_NOT_FOUND
+ */
+export const tweetAuthorValidator = async (req: Request, res: Response, next: NextFunction) => {
+  const tweet = req.tweet as Tweet
+  const author = await databaseService.users.findOne({ _id: tweet.user_id })
+  if (author && author.verify != UserVerifyStatus.Banned) {
+    next()
+  } else
+    throw new ErrorWithStatus({
+      status: HTTP_STATUS.NOT_FOUND,
+      message: USERS_MESSAGES.USER_NOT_FOUND
+    })
+}

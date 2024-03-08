@@ -1,3 +1,7 @@
+export const COMMON_MESSAGES = {
+  THIS_FEATURE_WILL_BE_AVAILABLE_SOON: 'This feature will be available soon'
+} as const
+
 export const USERS_MESSAGES = {
   //VALIDATING ERRORS
   VALIDATION_ERROR: 'Validation error',

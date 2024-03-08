@@ -1,5 +1,4 @@
 import { TweetAudience, TweetType } from '~/constants/enums'
-import Hashtag from '../schemas/Hashtag.schema'
 import { Media } from '../Others'
 
 export interface CreateTweetRequestBody {
@@ -7,7 +6,7 @@ export interface CreateTweetRequestBody {
   audience: TweetAudience
   content: string
   parent_id: null | string
-  hashtags: Hashtag[]
+  hashtags: { name: string; _id?: string }[]
   mentions: string[]
   medias: Media[]
 }

@@ -12,7 +12,7 @@ class TweetsService {
   ) {
     const hashtags = await Promise.all(
       payload.hashtags.map(async (value) => {
-        if (value._id) return value._id
+        if (value._id) return new ObjectId(value._id)
         //add new hashtags to DB
         const newHashtag = new Hashtag({ name: value.name })
         await databaseService.hashtags.insertOne(newHashtag)

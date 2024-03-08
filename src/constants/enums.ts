@@ -33,5 +33,5 @@ export enum TweetType {
 
 export enum TweetAudience {
   Everyone,
-  TwitterCircle
+  Follower
 }

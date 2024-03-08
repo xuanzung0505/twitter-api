@@ -8,6 +8,9 @@ import Like from '~/models/schemas/Like.schema'
 import databaseService from '~/services/database.services'
 import { validate } from '~/utils/validation'
 
+/**
+ * Make sure the like reaction exists in DB, and the user who makes the request owns that like reaction.
+ */
 export const unlikeValidator = validate(
   checkSchema(
     {

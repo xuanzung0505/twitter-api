@@ -78,7 +78,12 @@ userRouter.post('/refresh_token', refreshTokenValidator, wrapRequestHandler(refr
  * Header: {Authorization: Bearer <access_token>}
  * Body: { refresh_token: string }
  */
-userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController))
+userRouter.post(
+  '/logout',
+  // accessTokenValidator,
+  //  refreshTokenValidator,
+  wrapRequestHandler(logoutController)
+)
 
 /**
  * Description: Submit email to verify user's email, send email to user

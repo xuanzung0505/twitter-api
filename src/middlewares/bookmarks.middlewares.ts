@@ -8,6 +8,9 @@ import Bookmark from '~/models/schemas/Bookmark.schema'
 import databaseService from '~/services/database.services'
 import { validate } from '~/utils/validation'
 
+/**
+ * Make sure the bookmark exists in DB, and the user who makes the request owns that bookmark
+ */
 export const removeFromBookmarksValidator = validate(
   checkSchema(
     {
