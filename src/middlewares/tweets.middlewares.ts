@@ -85,6 +85,10 @@ export const createTweetValidator = validate(
         isArray: true,
         custom: {
           options: (values: any[], { req }) => {
+            //check tweet type
+            if (req.body.type === TweetType.Retweet) {
+              if (values.length > 0) throw new Error(TWEET_MESSAGES.A_RETWEET_MUST_NOT_HAVE_HASHTAGS)
+            }
             //must be an array of object, each object's name starts with a letter a-zA-Z
             return values.every((value) => {
               if (typeof value != 'object' || typeof value.name != 'string')
@@ -100,6 +104,10 @@ export const createTweetValidator = validate(
         isArray: true,
         custom: {
           options: (values: any[], { req }) => {
+            //check tweet type
+            if (req.body.type === TweetType.Retweet) {
+              if (values.length > 0) throw new Error(TWEET_MESSAGES.A_RETWEET_MUST_NOT_HAVE_MENTIONS)
+            }
             //must be an array of string, each one is an objectId
             return values.every((value) => {
               return typeof value === 'string' && ObjectId.isValid(value)
@@ -173,12 +181,141 @@ export const getTweetByIDValidator = validate(
         custom: {
           options: async (value: string, { req }) => {
             if (!ObjectId.isValid(value)) throw new Error(TWEET_MESSAGES.TWEET_ID_IS_INVALID)
-            const tweet = await databaseService.tweets.findOne({ _id: new ObjectId(value) })
-            if (!tweet)
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.NOT_FOUND,
-                message: TWEET_MESSAGES.TWEET_NOT_FOUND
-              })
+            const [tweet] = await databaseService.tweets
+              .aggregate<Tweet>([
+                {
+                  $match: {
+                    _id: new ObjectId(value)
+                  }
+                },
+                {
+                  $lookup: {
+                    from: 'tweets',
+                    let: {
+                      local_parent_id: '$_id'
+                    },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: {
+                            $and: [
+                              {
+                                $eq: ['$$local_parent_id', '$parent_id']
+                              },
+                              {
+                                $eq: ['$type', 1]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ],
+                    as: 'total_retweets'
+                  }
+                },
+                {
+                  $addFields: {
+                    total_retweets: {
+                      $size: '$total_retweets'
+                    }
+                  }
+                },
+                {
+                  $lookup: {
+                    from: 'tweets',
+                    let: {
+                      local_parent_id: '$_id'
+                    },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: {
+                            $and: [
+                              {
+                                $eq: ['$$local_parent_id', '$parent_id']
+                              },
+                              {
+                                $eq: ['$type', 2]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ],
+                    as: 'total_quotes'
+                  }
+                },
+                {
+                  $addFields: {
+                    total_quotes: {
+                      $size: '$total_quotes'
+                    }
+                  }
+                },
+                {
+                  $lookup: {
+                    from: 'tweets',
+                    let: {
+                      local_parent_id: '$_id'
+                    },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: {
+                            $and: [
+                              {
+                                $eq: ['$$local_parent_id', '$parent_id']
+                              },
+                              {
+                                $eq: ['$type', 3]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ],
+                    as: 'total_comments'
+                  }
+                },
+                {
+                  $addFields: {
+                    total_comments: {
+                      $size: '$total_comments'
+                    }
+                  }
+                },
+                {
+                  $lookup: {
+                    from: 'likes',
+                    localField: '_id',
+                    foreignField: 'tweet_id',
+                    as: 'total_likes'
+                  }
+                },
+                {
+                  $addFields: {
+                    total_likes: {
+                      $size: '$total_likes'
+                    }
+                  }
+                },
+                {
+                  $lookup: {
+                    from: 'bookmarks',
+                    localField: '_id',
+                    foreignField: 'tweet_id',
+                    as: 'total_bookmarks'
+                  }
+                },
+                {
+                  $addFields: {
+                    total_bookmarks: {
+                      $size: '$total_bookmarks'
+                    }
+                  }
+                }
+              ])
+              .toArray()
             ;(req as Request).tweet = tweet
             return true
           }
@@ -186,6 +323,36 @@ export const getTweetByIDValidator = validate(
       }
     },
     ['params']
+  )
+)
+
+export const getTweetChildrenValidator = validate(
+  checkSchema(
+    {
+      id: {
+        isString: {
+          errorMessage: TWEET_MESSAGES.TWEET_ID_MUST_BE_A_STRING
+        },
+        custom: {
+          options: (value, { req }) => {
+            if (!ObjectId.isValid(value)) throw new Error(TWEET_MESSAGES.TWEET_ID_IS_INVALID)
+          }
+        }
+      },
+      type: {
+        isIn: { options: [tweetTypeEnum] },
+        errorMessage: TWEET_MESSAGES.TWEET_TYPE_IS_INVALID
+      },
+      limit: {
+        isInt: { errorMessage: TWEET_MESSAGES.TWEET_LIMIT_MUST_BE_INTEGER, options: { min: 1, max: 99 } },
+        default: { options: 10 }
+      },
+      page: {
+        isInt: { errorMessage: TWEET_MESSAGES.TWEET_PAGE_MUST_BE_INTEGER, options: { min: 1 } },
+        default: { options: 1 }
+      }
+    },
+    ['params', 'query']
   )
 )
 

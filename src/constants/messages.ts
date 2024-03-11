@@ -86,14 +86,18 @@ export const TWEET_MESSAGES = {
   TWEET_CONTENT_MUST_NOT_BE_EMPTY: 'Tweet content must not be empty',
   TWEET_CONTENT_MUST_BE_EMPTY: 'Tweet content must be empty',
   TWEET_PARENT_ID_MUST_BE_NULL_OR_A_VALID_OBJECT_ID: 'Tweet parent_id must be null or a valid objectId',
+  A_RETWEET_MUST_NOT_HAVE_HASHTAGS: 'A retweet must not have hashtags',
   TWEET_HASHTAGS_MUST_BE_AN_ARRAY_OF_HASHTAG_OBJECT: 'Tweet hashtags must be an array of hashtag object',
   TWEET_HASHTAGS_NAMES_MUST_START_WITH_AN_ENGLISH_ALPHABET_CHARACTER: 'Tweet hashtags names must start with a-z or A-Z',
+  A_RETWEET_MUST_NOT_HAVE_MENTIONS: 'A retweet must not have mentions',
   TWEET_MENTIONS_MUST_BE_AN_ARRAY_OF_OBJECT_ID: 'Tweet mentions must be an array of objectId',
   TWEET_MEDIAS_MUST_BE_AN_ARRAY_OF_MEDIA_OBJECT: 'Tweet medias must be an array of media object',
   CREATE_TWEET_SUCCESSFULLY: 'Create tweet successfully',
   TWEET_ID_MUST_BE_A_STRING: 'Tweet_id must be a string',
   TWEET_ID_IS_INVALID: 'Tweet_id is invalid',
-  GET_TWEET_SUCCESSFULLY: 'Get tweet successfully'
+  GET_TWEET_SUCCESSFULLY: 'Get tweet successfully',
+  TWEET_LIMIT_MUST_BE_INTEGER: 'Tweet limit must be integer',
+  TWEET_PAGE_MUST_BE_INTEGER: 'Tweet page must be integer'
 } as const
 
 export const BOOKMARK_MESSAGES = {
