@@ -64,6 +64,58 @@ class TweetsService {
     )
     return result
   }
+
+  async getTweetChildren({
+    id,
+    type,
+    limit,
+    page
+  }: {
+    id: string
+    type: number | undefined
+    limit: number
+    page: number
+  }) {
+    const filter: { parent_id: ObjectId; type?: number } = { parent_id: new ObjectId(id) }
+    if (typeof type === 'number') filter.type = type
+
+    const result = await databaseService.tweets
+      .aggregate<{ metadata: { totalDocs: number }; data: Tweet[] }>([
+        {
+          $match: filter
+        },
+        {
+          $facet: {
+            metadata: [
+              {
+                $count: 'totalDocs'
+              }
+            ],
+            data: [
+              {
+                $skip: (page - 1) * limit
+              },
+              {
+                $limit: limit
+              }
+            ]
+          }
+        },
+        {
+          $unwind: {
+            path: '$metadata'
+          }
+        }
+      ])
+      .toArray()
+    if (result.length > 0) return result[0]
+    return {
+      metadata: {
+        totalDocs: 0
+      },
+      data: []
+    }
+  }
 }
 
 const tweetsService = new TweetsService()

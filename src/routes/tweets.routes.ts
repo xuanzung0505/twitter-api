@@ -55,9 +55,9 @@ tweetRouter.get(
   '/:id/children',
   isUserLoggedInValidator(accessTokenValidator),
   isUserLoggedInValidator(verifiedUserValidator),
-  // getTweetByIDValidator,
-  // tweetAudienceValidator,
-  // wrapRequestHandler(tweetAuthorValidator),
+  getTweetByIDValidator,
+  tweetAudienceValidator,
+  wrapRequestHandler(tweetAuthorValidator),
   getTweetChildrenValidator,
   wrapRequestHandler(getTweetChildrenController)
 )

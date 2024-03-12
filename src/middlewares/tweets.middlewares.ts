@@ -1,5 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express'
-import { check, checkSchema } from 'express-validator'
+import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import { MediaType, TweetAudience, TweetType, UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
@@ -329,27 +329,18 @@ export const getTweetByIDValidator = validate(
 export const getTweetChildrenValidator = validate(
   checkSchema(
     {
-      id: {
-        isString: {
-          errorMessage: TWEET_MESSAGES.TWEET_ID_MUST_BE_A_STRING
-        },
-        custom: {
-          options: (value, { req }) => {
-            if (!ObjectId.isValid(value)) throw new Error(TWEET_MESSAGES.TWEET_ID_IS_INVALID)
-          }
-        }
-      },
       type: {
+        optional: true,
         isIn: { options: [tweetTypeEnum] },
         errorMessage: TWEET_MESSAGES.TWEET_TYPE_IS_INVALID
       },
       limit: {
-        isInt: { errorMessage: TWEET_MESSAGES.TWEET_LIMIT_MUST_BE_INTEGER, options: { min: 1, max: 99 } },
-        default: { options: 10 }
+        optional: true,
+        isInt: { errorMessage: TWEET_MESSAGES.TWEET_LIMIT_MUST_BE_A_VALID_INTEGER, options: { min: 1, max: 50 } }
       },
       page: {
-        isInt: { errorMessage: TWEET_MESSAGES.TWEET_PAGE_MUST_BE_INTEGER, options: { min: 1 } },
-        default: { options: 1 }
+        optional: true,
+        isInt: { errorMessage: TWEET_MESSAGES.TWEET_PAGE_MUST_BE_A_VALID_INTEGER, options: { min: 1 } }
       }
     },
     ['params', 'query']

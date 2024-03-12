@@ -96,8 +96,10 @@ export const TWEET_MESSAGES = {
   TWEET_ID_MUST_BE_A_STRING: 'Tweet_id must be a string',
   TWEET_ID_IS_INVALID: 'Tweet_id is invalid',
   GET_TWEET_SUCCESSFULLY: 'Get tweet successfully',
-  TWEET_LIMIT_MUST_BE_INTEGER: 'Tweet limit must be integer',
-  TWEET_PAGE_MUST_BE_INTEGER: 'Tweet page must be integer'
+  TWEET_LIMIT_MUST_BE_A_VALID_INTEGER: 'Tweet limit must be a valid integer',
+  TWEET_PAGE_MUST_BE_A_VALID_INTEGER: 'Tweet page must be a valid integer',
+  GET_TWEET_CHILDREN_SUCCESSFULLY: 'Get tweet children successfully',
+  GET_TWEET_CHILDREN_FAILED: 'Get tweet children failed'
 } as const
 
 export const BOOKMARK_MESSAGES = {

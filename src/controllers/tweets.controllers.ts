@@ -6,6 +6,7 @@ import { ParamsDictionary, Query } from 'express-serve-static-core'
 import { CreateTweetRequestBody, TweetParam, TweetQuery } from '~/models/requests/Tweet.requests'
 import { TWEET_MESSAGES } from '~/constants/messages'
 import Tweet from '~/models/schemas/Tweet.schema'
+import databaseService from '~/services/database.services'
 
 export const createTweetController: RequestHandler = async (
   req: Request<ParamsDictionary, any, CreateTweetRequestBody, Query, Record<string, any>>,
@@ -44,10 +45,65 @@ export const getTweetChildrenController = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { tweet_id } = req.params
-  const { type, limit, page } = req.query
+  const decoded_authorization = req.decoded_authorization ? (req.decoded_authorization as TokenPayload) : null
+  const user_id = decoded_authorization?.user_id ?? null
 
-  return res.status(HTTP_STATUS.NOT_FOUND).json({
-    message: TWEET_MESSAGES.TWEET_NOT_FOUND
+  const { id } = req.params
+  const { type, limit, page } = req.query
+  const myDefault = { limit: 10, page: 1 }
+  const myQuery = {
+    type: isFinite(Number(type)) ? Number(type) : undefined,
+    limit: isFinite(Number(limit)) ? Number(limit) : myDefault.limit,
+    page: isFinite(Number(page)) ? Number(page) : myDefault.page
+  }
+  const result = await tweetsService.getTweetChildren({
+    id,
+    ...myQuery
+  })
+
+  if (result.data.length > 0) {
+    //increase views for children tweets in the DB
+    const children_ids = result.data.map((item) => item._id)
+    const inc = user_id ? { user_views: 1 } : { guest_views: 1 }
+    const currentDate = new Date()
+    databaseService.tweets.updateMany(
+      {
+        _id: { $in: children_ids }
+      },
+      {
+        $inc: inc,
+        $set: {
+          updated_at: currentDate
+        }
+      },
+      {}
+    )
+    //return children with the updated views regardless of the result from our mutation above
+    result.data.forEach((value) => {
+      if (user_id) value.user_views += 1
+      else value.guest_views += 1
+    })
+    return res.status(HTTP_STATUS.OK).json({
+      message: TWEET_MESSAGES.GET_TWEET_CHILDREN_SUCCESSFULLY,
+      result: {
+        ...result,
+        metadata: {
+          ...result.metadata,
+          limit: myQuery.limit,
+          page: myQuery.page
+        }
+      }
+    })
+  }
+  return res.status(HTTP_STATUS.OK).json({
+    message: TWEET_MESSAGES.GET_TWEET_CHILDREN_SUCCESSFULLY,
+    result: {
+      ...result,
+      metadata: {
+        ...result.metadata,
+        limit: myQuery.limit,
+        page: myQuery.page
+      }
+    }
   })
 }
