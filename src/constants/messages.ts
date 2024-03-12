@@ -1,5 +1,7 @@
 export const COMMON_MESSAGES = {
-  THIS_FEATURE_WILL_BE_AVAILABLE_SOON: 'This feature will be available soon'
+  THIS_FEATURE_WILL_BE_AVAILABLE_SOON: 'This feature will be available soon',
+  LIMIT_QUERY_MUST_BE_A_VALID_INTEGER: 'Limit query must be a valid integer',
+  PAGE_QUERY_MUST_BE_A_VALID_INTEGER: 'Page query must be a valid integer'
 } as const
 
 export const USERS_MESSAGES = {
@@ -96,10 +98,10 @@ export const TWEET_MESSAGES = {
   TWEET_ID_MUST_BE_A_STRING: 'Tweet_id must be a string',
   TWEET_ID_IS_INVALID: 'Tweet_id is invalid',
   GET_TWEET_SUCCESSFULLY: 'Get tweet successfully',
-  TWEET_LIMIT_MUST_BE_A_VALID_INTEGER: 'Tweet limit must be a valid integer',
-  TWEET_PAGE_MUST_BE_A_VALID_INTEGER: 'Tweet page must be a valid integer',
   GET_TWEET_CHILDREN_SUCCESSFULLY: 'Get tweet children successfully',
-  GET_TWEET_CHILDREN_FAILED: 'Get tweet children failed'
+  GET_TWEET_CHILDREN_FAILED: 'Get tweet children failed',
+  GET_TWEETS_SUCCESSFULLY: 'Get tweets successfully',
+  GET_TWEETS_FAILED: 'Get tweets failed'
 } as const
 
 export const BOOKMARK_MESSAGES = {

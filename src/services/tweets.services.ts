@@ -3,6 +3,7 @@ import databaseService from './database.services'
 import Tweet from '~/models/schemas/Tweet.schema'
 import { ObjectId } from 'mongodb'
 import Hashtag from '~/models/schemas/Hashtag.schema'
+import { TweetAdditionalData } from '~/utils/pipelines'
 
 class TweetsService {
   async createTweet(
@@ -73,8 +74,8 @@ class TweetsService {
   }: {
     id: string
     type: number | undefined
-    limit: number
-    page: number
+    limit: number | undefined
+    page: number | undefined
   }) {
     const filter: { parent_id: ObjectId; type?: number } = { parent_id: new ObjectId(id) }
     if (typeof type === 'number') filter.type = type
@@ -93,11 +94,12 @@ class TweetsService {
             ],
             data: [
               {
-                $skip: (page - 1) * limit
+                $skip: ((page as number) - 1) * (limit as number)
               },
               {
                 $limit: limit
-              }
+              },
+              ...TweetAdditionalData
             ]
           }
         },
@@ -108,13 +110,77 @@ class TweetsService {
         }
       ])
       .toArray()
-    if (result.length > 0) return result[0]
-    return {
-      metadata: {
-        totalDocs: 0
-      },
-      data: []
-    }
+    return result.length > 0
+      ? result[0]
+      : {
+          metadata: {
+            totalDocs: 0
+          },
+          data: []
+        }
+  }
+
+  async getTweetsFromFollowing({
+    user_id,
+    type,
+    limit,
+    page
+  }: {
+    user_id: string
+    type: number | undefined
+    limit: number | undefined
+    page: number | undefined
+  }) {
+    //retrieve all users whom the current user is following
+    const following = await databaseService.followers
+      .find({
+        user_id: new ObjectId(user_id)
+      })
+      .toArray()
+
+    //get all the tweets from followed users
+    const followingsIds = following.map((value) => value.followed_user_id)
+    const filter: { user_id: any; type?: number } = { user_id: { $in: followingsIds } }
+    if (typeof type === 'number') filter.type = type
+
+    const result = await databaseService.tweets
+      .aggregate<{ metadata: { totalDocs: number }; data: Tweet[] }>([
+        {
+          $match: filter
+        },
+        {
+          $facet: {
+            metadata: [
+              {
+                $count: 'totalDocs'
+              }
+            ],
+            data: [
+              {
+                $skip: ((page as number) - 1) * (limit as number)
+              },
+              {
+                $limit: limit
+              },
+              ...TweetAdditionalData
+            ]
+          }
+        },
+        {
+          $unwind: {
+            path: '$metadata'
+          }
+        }
+      ])
+      .toArray()
+    return result.length > 0
+      ? result[0]
+      : {
+          metadata: {
+            totalDocs: 0
+          },
+          data: []
+        }
   }
 }
 

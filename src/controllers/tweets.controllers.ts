@@ -7,6 +7,7 @@ import { CreateTweetRequestBody, TweetParam, TweetQuery } from '~/models/request
 import { TWEET_MESSAGES } from '~/constants/messages'
 import Tweet from '~/models/schemas/Tweet.schema'
 import databaseService from '~/services/database.services'
+import { parseQuery } from '~/utils/commons'
 
 export const createTweetController: RequestHandler = async (
   req: Request<ParamsDictionary, any, CreateTweetRequestBody, Query, Record<string, any>>,
@@ -50,12 +51,7 @@ export const getTweetChildrenController = async (
 
   const { id } = req.params
   const { type, limit, page } = req.query
-  const myDefault = { limit: 10, page: 1 }
-  const myQuery = {
-    type: isFinite(Number(type)) ? Number(type) : undefined,
-    limit: isFinite(Number(limit)) ? Number(limit) : myDefault.limit,
-    page: isFinite(Number(page)) ? Number(page) : myDefault.page
-  }
+  const myQuery = parseQuery({ type, limit, page }, { type: undefined, limit: 10, page: 1 })
   const result = await tweetsService.getTweetChildren({
     id,
     ...myQuery
@@ -83,16 +79,49 @@ export const getTweetChildrenController = async (
       if (user_id) value.user_views += 1
       else value.guest_views += 1
     })
-    return res.status(HTTP_STATUS.OK).json({
-      message: TWEET_MESSAGES.GET_TWEET_CHILDREN_SUCCESSFULLY,
-      result: {
-        ...result,
-        metadata: {
-          ...result.metadata,
-          limit: myQuery.limit,
-          page: myQuery.page
-        }
+  }
+  return res.status(HTTP_STATUS.OK).json({
+    message: TWEET_MESSAGES.GET_TWEET_CHILDREN_SUCCESSFULLY,
+    result: {
+      ...result,
+      metadata: {
+        ...result.metadata,
+        limit: myQuery.limit,
+        page: myQuery.page
       }
+    }
+  })
+}
+
+export const getTweetsFromFollowingController = async (
+  req: Request<any, any, any, TweetQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const { type, limit, page } = req.query
+  const myQuery = parseQuery({ type, limit, page }, { type: undefined, limit: 10, page: 1 })
+  const result = await tweetsService.getTweetsFromFollowing({ user_id, ...myQuery })
+  if (result.data.length > 0) {
+    //increase views for children tweets in the DB
+    const tweet_ids = result.data.map((item) => item._id)
+    const inc = { user_views: 1 }
+    const currentDate = new Date()
+    databaseService.tweets.updateMany(
+      {
+        _id: { $in: tweet_ids }
+      },
+      {
+        $inc: inc,
+        $set: {
+          updated_at: currentDate
+        }
+      },
+      {}
+    )
+    //return children with the updated views regardless of the result from our mutation above
+    result.data.forEach((value) => {
+      value.user_views += 1
     })
   }
   return res.status(HTTP_STATUS.OK).json({

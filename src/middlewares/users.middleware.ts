@@ -571,6 +571,9 @@ export const updateMeValidator = validate(
   )
 )
 
+/**
+ * Make sure that users can only follow verified accounts
+ */
 export const followValidator = validate(
   checkSchema(
     {

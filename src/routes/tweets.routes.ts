@@ -2,12 +2,15 @@ import { Router } from 'express'
 import {
   createTweetController,
   getTweetByIDController,
-  getTweetChildrenController
+  getTweetChildrenController,
+  getTweetsFromFollowingController
 } from '~/controllers/tweets.controllers'
+import { paginationValidator } from '~/middlewares/common.middlewares'
 import {
   createTweetValidator,
   getTweetByIDValidator,
   getTweetChildrenValidator,
+  getTweetsFromFollowingValidator,
   tweetAudienceValidator,
   tweetAuthorValidator
 } from '~/middlewares/tweets.middlewares'
@@ -32,11 +35,11 @@ tweetRouter.post(
 
 /**
  * Description: get tweet by id
- * Path: /:id
+ * Path: /details/:id
  * Method: GET
  */
 tweetRouter.get(
-  '/:id',
+  '/details/:id',
   isUserLoggedInValidator(accessTokenValidator),
   isUserLoggedInValidator(verifiedUserValidator),
   getTweetByIDValidator,
@@ -47,19 +50,35 @@ tweetRouter.get(
 
 /**
  * Description: get tweet's children
- * Path: /:id/children
+ * Path: /details/:id/children
  * Method: GET
  * Query: {type, limit, page}
  */
 tweetRouter.get(
-  '/:id/children',
+  '/details/:id/children',
   isUserLoggedInValidator(accessTokenValidator),
   isUserLoggedInValidator(verifiedUserValidator),
   getTweetByIDValidator,
   tweetAudienceValidator,
   wrapRequestHandler(tweetAuthorValidator),
   getTweetChildrenValidator,
+  paginationValidator,
   wrapRequestHandler(getTweetChildrenController)
+)
+
+/**
+ * Description: get tweets from accounts which the current user follows
+ * Path: /following
+ * Method: GET
+ * Query: {type, limit, page}
+ */
+tweetRouter.get(
+  '/following',
+  accessTokenValidator,
+  verifiedUserValidator,
+  getTweetsFromFollowingValidator,
+  paginationValidator,
+  wrapRequestHandler(getTweetsFromFollowingController)
 )
 
 export default tweetRouter

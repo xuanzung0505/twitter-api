@@ -9,6 +9,7 @@ import { Media } from '~/models/Others'
 import Tweet from '~/models/schemas/Tweet.schema'
 import databaseService from '~/services/database.services'
 import { convertEnumToArray } from '~/utils/commons'
+import { TweetAdditionalData } from '~/utils/pipelines'
 import { validate } from '~/utils/validation'
 
 const tweetTypeEnum = convertEnumToArray(TweetType)
@@ -188,132 +189,7 @@ export const getTweetByIDValidator = validate(
                     _id: new ObjectId(value)
                   }
                 },
-                {
-                  $lookup: {
-                    from: 'tweets',
-                    let: {
-                      local_parent_id: '$_id'
-                    },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: {
-                            $and: [
-                              {
-                                $eq: ['$$local_parent_id', '$parent_id']
-                              },
-                              {
-                                $eq: ['$type', 1]
-                              }
-                            ]
-                          }
-                        }
-                      }
-                    ],
-                    as: 'total_retweets'
-                  }
-                },
-                {
-                  $addFields: {
-                    total_retweets: {
-                      $size: '$total_retweets'
-                    }
-                  }
-                },
-                {
-                  $lookup: {
-                    from: 'tweets',
-                    let: {
-                      local_parent_id: '$_id'
-                    },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: {
-                            $and: [
-                              {
-                                $eq: ['$$local_parent_id', '$parent_id']
-                              },
-                              {
-                                $eq: ['$type', 2]
-                              }
-                            ]
-                          }
-                        }
-                      }
-                    ],
-                    as: 'total_quotes'
-                  }
-                },
-                {
-                  $addFields: {
-                    total_quotes: {
-                      $size: '$total_quotes'
-                    }
-                  }
-                },
-                {
-                  $lookup: {
-                    from: 'tweets',
-                    let: {
-                      local_parent_id: '$_id'
-                    },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: {
-                            $and: [
-                              {
-                                $eq: ['$$local_parent_id', '$parent_id']
-                              },
-                              {
-                                $eq: ['$type', 3]
-                              }
-                            ]
-                          }
-                        }
-                      }
-                    ],
-                    as: 'total_comments'
-                  }
-                },
-                {
-                  $addFields: {
-                    total_comments: {
-                      $size: '$total_comments'
-                    }
-                  }
-                },
-                {
-                  $lookup: {
-                    from: 'likes',
-                    localField: '_id',
-                    foreignField: 'tweet_id',
-                    as: 'total_likes'
-                  }
-                },
-                {
-                  $addFields: {
-                    total_likes: {
-                      $size: '$total_likes'
-                    }
-                  }
-                },
-                {
-                  $lookup: {
-                    from: 'bookmarks',
-                    localField: '_id',
-                    foreignField: 'tweet_id',
-                    as: 'total_bookmarks'
-                  }
-                },
-                {
-                  $addFields: {
-                    total_bookmarks: {
-                      $size: '$total_bookmarks'
-                    }
-                  }
-                }
+                ...TweetAdditionalData
               ])
               .toArray()
             ;(req as Request).tweet = tweet
@@ -333,17 +209,22 @@ export const getTweetChildrenValidator = validate(
         optional: true,
         isIn: { options: [tweetTypeEnum] },
         errorMessage: TWEET_MESSAGES.TWEET_TYPE_IS_INVALID
-      },
-      limit: {
-        optional: true,
-        isInt: { errorMessage: TWEET_MESSAGES.TWEET_LIMIT_MUST_BE_A_VALID_INTEGER, options: { min: 1, max: 50 } }
-      },
-      page: {
-        optional: true,
-        isInt: { errorMessage: TWEET_MESSAGES.TWEET_PAGE_MUST_BE_A_VALID_INTEGER, options: { min: 1 } }
       }
     },
-    ['params', 'query']
+    ['query']
+  )
+)
+
+export const getTweetsFromFollowingValidator = validate(
+  checkSchema(
+    {
+      type: {
+        optional: true,
+        isIn: { options: [[TweetType.Tweet, TweetType.Retweet, TweetType.QuoteTweet]] },
+        errorMessage: TWEET_MESSAGES.TWEET_TYPE_IS_INVALID
+      }
+    },
+    ['query']
   )
 )
 
