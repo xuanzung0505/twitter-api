@@ -128,3 +128,9 @@ export const LIKE_MESSAGES = {
   UNLIKE_SUCCESSFULLY: 'Unlike successfully',
   UNLIKE_FAILED: 'Unlike failed'
 } as const
+
+export const SEARCH_MESSAGES = {
+  QUERY_MUST_BE_A_STRING: 'Query must be a string',
+  QUERY_MUST_NOT_BE_EMPTY: 'Query must not be empty',
+  SEARCH_SUCCESSFULLY: 'Search successfully'
+} as const

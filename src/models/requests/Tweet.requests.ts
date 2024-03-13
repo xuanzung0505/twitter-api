@@ -1,6 +1,7 @@
 import { TweetAudience, TweetType } from '~/constants/enums'
 import { Media } from '../Others'
-import { ParamsDictionary, Query } from 'express-serve-static-core'
+import { ParamsDictionary } from 'express-serve-static-core'
+import { Pagination } from './Common.requests'
 
 export interface CreateTweetRequestBody {
   type: TweetType
@@ -16,8 +17,6 @@ export interface TweetParam extends ParamsDictionary {
   id: string
 }
 
-export interface TweetQuery extends Query {
-  type: string
-  limit: string
-  page: string
+export interface TweetQuery extends Pagination {
+  type?: string
 }

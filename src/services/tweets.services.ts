@@ -3,7 +3,7 @@ import databaseService from './database.services'
 import Tweet from '~/models/schemas/Tweet.schema'
 import { ObjectId } from 'mongodb'
 import Hashtag from '~/models/schemas/Hashtag.schema'
-import { TweetAdditionalData } from '~/utils/pipelines'
+import { TweetPaginationWithAdditionalData } from '~/utils/pipelines'
 
 class TweetsService {
   async createTweet(
@@ -85,29 +85,7 @@ class TweetsService {
         {
           $match: filter
         },
-        {
-          $facet: {
-            metadata: [
-              {
-                $count: 'totalDocs'
-              }
-            ],
-            data: [
-              {
-                $skip: ((page as number) - 1) * (limit as number)
-              },
-              {
-                $limit: limit
-              },
-              ...TweetAdditionalData
-            ]
-          }
-        },
-        {
-          $unwind: {
-            path: '$metadata'
-          }
-        }
+        ...TweetPaginationWithAdditionalData(limit as number, page as number)
       ])
       .toArray()
     return result.length > 0
@@ -148,29 +126,7 @@ class TweetsService {
         {
           $match: filter
         },
-        {
-          $facet: {
-            metadata: [
-              {
-                $count: 'totalDocs'
-              }
-            ],
-            data: [
-              {
-                $skip: ((page as number) - 1) * (limit as number)
-              },
-              {
-                $limit: limit
-              },
-              ...TweetAdditionalData
-            ]
-          }
-        },
-        {
-          $unwind: {
-            path: '$metadata'
-          }
-        }
+        ...TweetPaginationWithAdditionalData(limit as number, page as number)
       ])
       .toArray()
     return result.length > 0

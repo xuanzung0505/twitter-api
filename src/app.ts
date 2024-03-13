@@ -8,6 +8,7 @@ import cors from 'cors'
 import tweetRouter from './routes/tweets.routes'
 import bookmarkRouter from './routes/bookmarks.routes'
 import likeRouter from './routes/likes.routes'
+import searchRouter from './routes/search.routes'
 
 const app = express()
 app.use(express.json())
@@ -19,6 +20,7 @@ app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 app.use('/tweets', tweetRouter)
 app.use('/bookmarks', bookmarkRouter)
 app.use('/likes', likeRouter)
+app.use('/search', searchRouter)
 app.use(defaultErrorHandler)
 
 export default app

@@ -187,3 +187,29 @@ export const TweetAdditionalData = [
     }
   }
 ]
+
+export const TweetPaginationWithAdditionalData = (limit: number, page: number) => [
+  {
+    $facet: {
+      metadata: [
+        {
+          $count: 'totalDocs'
+        }
+      ],
+      data: [
+        {
+          $skip: ((page as number) - 1) * (limit as number)
+        },
+        {
+          $limit: limit
+        },
+        ...TweetAdditionalData
+      ]
+    }
+  },
+  {
+    $unwind: {
+      path: '$metadata'
+    }
+  }
+]

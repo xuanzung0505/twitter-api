@@ -32,7 +32,7 @@ class DatabaseService {
     this.client = new MongoClient(uri, {
       serverApi: {
         version: ServerApiVersion.v1,
-        strict: true,
+        strict: false,
         deprecationErrors: true
       }
     })
@@ -83,6 +83,16 @@ class DatabaseService {
   async indexLikes() {
     const exists = await this.likes.indexExists('tweet_id_1')
     if (!exists) this.likes.createIndex({ tweet_id: 1 })
+  }
+
+  async indexTweets() {
+    const exists = await this.tweets.indexExists('content_text')
+    if (!exists) this.tweets.createIndex({ content: 'text' })
+  }
+
+  async indexHashtags() {
+    const exists = await this.hashtags.indexExists('name_text')
+    if (!exists) this.hashtags.createIndex({ name: 'text' })
   }
 
   get users(): Collection<User> {

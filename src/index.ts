@@ -11,6 +11,8 @@ databaseService.connect().then(() => {
   databaseService.indexVideoStatus()
   databaseService.indexBookmarks()
   databaseService.indexLikes()
+  databaseService.indexTweets()
+  databaseService.indexHashtags()
 })
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`)
