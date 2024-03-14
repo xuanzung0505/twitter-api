@@ -8,12 +8,12 @@ import { parseQuery } from '~/utils/commons'
 
 export const searchController = async (req: Request<any, any, any, SearchQuery>, res: Response, next: NextFunction) => {
   const { user_id } = req.decoded_authorization as TokenPayload
-  const { q, f } = req.query
+  const { q, f, pf } = req.query
   const { limit, page } = req.query
   const myDefault = { limit: 10, page: 1 }
   const myQuery = parseQuery({ limit, page }, myDefault) as typeof myDefault
 
-  const result = await searchService.search({ user_id, q, f, ...myQuery })
+  const result = await searchService.search({ user_id, q, f, pf, ...myQuery })
   return res.status(HTTP_STATUS.OK).json({
     message: SEARCH_MESSAGES.SEARCH_SUCCESSFULLY,
     result: {

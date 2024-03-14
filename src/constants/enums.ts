@@ -36,9 +36,13 @@ export enum TweetAudience {
   Follower
 }
 
-export enum SearchQueryField {
+export enum FilterQuery {
   TOP = 'top',
   LATEST = 'latest',
   PEOPLE = 'people',
   MEDIA = 'media'
+}
+
+export enum PeopleFilterQuery {
+  ON = 'on'
 }

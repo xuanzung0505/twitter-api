@@ -132,8 +132,10 @@ export const LIKE_MESSAGES = {
 export const SEARCH_MESSAGES = {
   QUERY_MUST_BE_A_STRING: 'Query must be a string',
   QUERY_MUST_NOT_BE_EMPTY: 'Query must not be empty',
-  FIELD_MUST_BE_A_STRING: 'Field must be a string',
-  FIELD_MUST_NOT_BE_EMPTY: 'Field must not be empty',
-  FIELD_IS_INVALID: 'Field is invalid',
+  FILTER_QUERY_MUST_BE_A_STRING: 'Filter query must be a string',
+  FILTER_QUERY_NOT_BE_EMPTY: 'Filter query must not be empty',
+  FILTER_QUERY_IS_INVALID: 'Filter query is invalid',
+  PEOPLE_FILTER_QUERY_MUST_BE_A_STRING: 'People filter query must be a string',
+  PEOPLE_FILTER_QUERY_IS_INVALID: 'People filter query is invalid',
   SEARCH_SUCCESSFULLY: 'Search successfully'
 } as const
