@@ -132,5 +132,8 @@ export const LIKE_MESSAGES = {
 export const SEARCH_MESSAGES = {
   QUERY_MUST_BE_A_STRING: 'Query must be a string',
   QUERY_MUST_NOT_BE_EMPTY: 'Query must not be empty',
+  FIELD_MUST_BE_A_STRING: 'Field must be a string',
+  FIELD_MUST_NOT_BE_EMPTY: 'Field must not be empty',
+  FIELD_IS_INVALID: 'Field is invalid',
   SEARCH_SUCCESSFULLY: 'Search successfully'
 } as const

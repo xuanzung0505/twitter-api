@@ -1,5 +1,9 @@
-export const convertEnumToArray: (numberEnum: object) => number[] = (numberEnum) => {
+export const convertEnumToNumberArray: (numberEnum: object) => number[] = (numberEnum) => {
   return Object.values(numberEnum).filter((value) => typeof value === 'number')
+}
+
+export const convertEnumToStringArray: (stringEnum: object) => string[] = (stringEnum) => {
+  return Object.values(stringEnum).filter((value) => typeof value === 'string')
 }
 
 /**

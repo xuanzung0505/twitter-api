@@ -180,15 +180,10 @@ export const TweetAdditionalData = [
         $size: '$total_comments'
       }
     }
-  },
-  {
-    $sort: {
-      created_at: -1
-    }
   }
 ]
 
-export const TweetPaginationWithAdditionalData = (limit: number, page: number) => [
+export const TweetPaginationWithAdditionalData = (limit: number, page: number, additionalPipelines?: any[]) => [
   {
     $facet: {
       metadata: [
@@ -203,6 +198,7 @@ export const TweetPaginationWithAdditionalData = (limit: number, page: number) =
         {
           $limit: limit
         },
+        ...(additionalPipelines ?? []),
         ...TweetAdditionalData
       ]
     }

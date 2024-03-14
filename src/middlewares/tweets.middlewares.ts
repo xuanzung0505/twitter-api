@@ -8,13 +8,13 @@ import { ErrorWithStatus } from '~/models/Errors'
 import { Media } from '~/models/Others'
 import Tweet from '~/models/schemas/Tweet.schema'
 import databaseService from '~/services/database.services'
-import { convertEnumToArray } from '~/utils/commons'
+import { convertEnumToNumberArray } from '~/utils/commons'
 import { TweetAdditionalData } from '~/utils/pipelines'
 import { validate } from '~/utils/validation'
 
-const tweetTypeEnum = convertEnumToArray(TweetType)
-const tweetAudienceEnum = convertEnumToArray(TweetAudience)
-const mediaTypeEnum = convertEnumToArray(MediaType)
+const tweetTypeEnum = convertEnumToNumberArray(TweetType)
+const tweetAudienceEnum = convertEnumToNumberArray(TweetAudience)
+const mediaTypeEnum = convertEnumToNumberArray(MediaType)
 
 export const createTweetValidator = validate(
   checkSchema(
