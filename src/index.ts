@@ -1,4 +1,4 @@
-import app from '~/app'
+import { app } from '~/app'
 import databaseService from './services/database.services'
 import { initFolder } from './utils/file'
 import { PORT } from './utils/getEnv'

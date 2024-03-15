@@ -3,6 +3,7 @@ import { config } from 'dotenv'
 config()
 //App config
 export const PORT = process.env.PORT || 4000
+export const PORT_SOCKET = process.env.PORT_SOCKET || 4001
 export const HOST = process.env.HOST
 
 // MONGODB CREDENTIALS
