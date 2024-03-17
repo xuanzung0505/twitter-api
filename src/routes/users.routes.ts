@@ -67,6 +67,7 @@ userRouter.get('/oauth/google', wrapRequestHandler(googleOAuthController))
  * Description: Current access_token is expired, request a new access_token
  * Path: /refresh_token
  * Method: POST
+ * Header: {Authorization: Bearer <access_token>}
  * Body: { refresh_token: string }
  */
 userRouter.post('/refresh_token', refreshTokenValidator, wrapRequestHandler(refreshTokenController))

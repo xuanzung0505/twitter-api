@@ -22,6 +22,7 @@ import {
   JWT_SECRET_FORGOT_PASSWORD_TOKEN,
   JWT_SECRET_REFRESH_TOKEN
 } from '~/utils/getEnv'
+import { verifyAccessToken, verifyUser } from '~/utils/commons'
 
 const nameSchema: ParamSchema = {
   isString: { errorMessage: USERS_MESSAGES.NAME_MUST_BE_A_STRING },
@@ -263,22 +264,8 @@ export const accessTokenValidator = validate(
         notEmpty: { errorMessage: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED },
         custom: {
           options: async (value: string, { req }) => {
-            try {
-              const access_token = value.split(' ')[1]
-              if (!access_token) throw new Error(USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED)
-              const decoded_authorization = await verifyToken({
-                token: access_token,
-                secret: JWT_SECRET_ACCESS_TOKEN as string
-              })
-              ;(req as Request).decoded_authorization = decoded_authorization
-            } catch (error) {
-              if (error instanceof JsonWebTokenError) {
-                throw new ErrorWithStatus({
-                  message: capitalize(error.message),
-                  status: HTTP_STATUS.UNAUTHORIZED
-                })
-              } else throw error
-            }
+            const access_token = value.split(' ')[1]
+            await verifyAccessToken({ access_token, req })
             return true
           }
         }
@@ -497,16 +484,7 @@ export const oldPasswordValidator = async (req: Request, res: Response, next: Ne
 }
 
 export const verifiedUserValidator = (req: Request, res: Response, next: NextFunction) => {
-  const decoded_authorization = req.decoded_authorization as TokenPayload
-  const verify = decoded_authorization.verify as UserVerifyStatus
-  if (verify != UserVerifyStatus.Verified) {
-    return next(
-      new ErrorWithStatus({
-        message: USERS_MESSAGES.USER_NOT_VERIFIED,
-        status: HTTP_STATUS.FORBIDDEN
-      })
-    )
-  }
+  verifyUser({ req })
   return next()
 }
 
