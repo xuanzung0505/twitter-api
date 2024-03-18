@@ -3,6 +3,7 @@ import databaseService from './services/database.services'
 import { initFolder } from './utils/file'
 import { PORT, PORT_SOCKET } from './utils/getEnv'
 import httpServer from './socket'
+import redisRun from './redis'
 
 initFolder()
 databaseService.connect().then(() => {
@@ -19,3 +20,4 @@ app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`)
 })
 httpServer.listen(PORT_SOCKET)
+// redisRun()

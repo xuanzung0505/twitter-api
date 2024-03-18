@@ -48,12 +48,12 @@
     "minimist": "^1.2.8",
     "mongodb": "^6.3.0",
     "nanoid": "^5.0.6",
+    "redis": "^4.6.13",
     "sharp": "^0.33.2",
     "slash": "^5.1.0",
     "socket.io": "^4.7.5",
     "zx": "^7.2.3"
   },
-  "packageManager": "yarn@3.6.4",
   "optionalDependencies": {
     "bufferutil": "^4.0.8",
     "utf-8-validate": "^6.0.3"

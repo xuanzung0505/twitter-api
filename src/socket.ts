@@ -50,24 +50,21 @@ io.use(async (socket, next) => {
 })
 
 io.on('connection', (socket) => {
-  console.log(`a client connected: ${socket.id}`)
-  socket.on('disconnect', () => {
-    console.log(`a client disconnected: ${socket.id}`)
-    console.log(users)
-  })
   try {
-    const access_token = socket.handshake.auth.access_token as string
-    const { user_id } = socket.handshake.auth.decoded_authorization as TokenPayload
-    users[user_id] = { socket_id: socket.id }
-    console.log(users)
+    let access_token: null | string = null
+    let user_id: null | string = null
+    access_token = socket.handshake.auth.access_token
+    user_id = socket.handshake.auth.decoded_authorization?.user_id
+    if (!access_token || !user_id) throw new Error('Missing token or user id')
 
     //socket middlewares
     socket.use(async (packet, next) => {
       try {
-        await verifyAccessToken({ access_token })
+        await verifyAccessToken({ access_token: access_token as string })
       } catch (error) {
         next(new Error('Unauthorized'))
       }
+      next()
     })
     //catch errors from socket middlewares
     socket.on('error', (err) => {
@@ -77,18 +74,21 @@ io.on('connection', (socket) => {
       }
     })
 
-    socket.on('private_message', (data) => {
+    socket.on('disconnect', () => {
+      delete users[user_id as string]
+      console.log(`a client disconnected: ${socket.id}`)
+      console.log(users)
+    })
+    socket.on('private_message', (data: { to: string; content: string }) => {
       const receiver_socket_id = users[data.to].socket_id
+      console.log('receiver_socket_id', receiver_socket_id)
       socket.to(receiver_socket_id).emit('receive_private_message', {
         content: data.content,
         from: user_id
       })
     })
-    socket.on('disconnect', () => {
-      delete users[user_id]
-      console.log(`a client disconnected: ${socket.id}`)
-      console.log(users)
-    })
+    users[user_id] = { socket_id: socket.id }
+    console.log(users)
   } catch (error) {
     // console.log(error)
     socket.disconnect()
