@@ -27,7 +27,7 @@ import {
   GOOGLE_REDIRECT_URI
 } from '~/utils/getEnv'
 
-class UserService {
+export class UserService {
   private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
     return signToken({
       payload: { user_id, verify, token_type: TokenType.AccessToken },
@@ -413,6 +413,14 @@ class UserService {
     const { user_id, followed_user_id } = payload
     const result = await databaseService.followers.findOneAndDelete({ user_id, followed_user_id })
     return result
+  }
+
+  public getSignEmailVerifyToken(): typeof this.signEmailVerifyToken {
+    return this.signEmailVerifyToken
+  }
+
+  public getSignAccessAndRefreshToken(): typeof this.signAccessAndRefreshToken {
+    return this.signAccessAndRefreshToken
   }
 }
 
